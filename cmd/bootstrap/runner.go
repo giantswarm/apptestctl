@@ -83,6 +83,18 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		}
 	}
 
+	var helmClient helmclient.Interface
+	{
+		c := helmclient.Config{
+			K8sClient: k8sClients,
+			Logger:    r.logger,
+		}
+		helmClient, err = helmclient.New(c)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+	}
+
 	err = r.ensureCRDs(ctx, k8sClients)
 	if err != nil {
 		return microerror.Mask(err)
