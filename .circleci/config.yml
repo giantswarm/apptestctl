@@ -18,6 +18,6 @@ workflows:
           context: architect
           name: bootstrap-integration-test
           setup-script: "integration/setup/setup.sh"
-          test-dir: "integration/test/app/bootstrap"
+          test-dir: "integration/test/bootstrap"
           requires:
             - go-test
