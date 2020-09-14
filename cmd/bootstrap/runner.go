@@ -61,13 +61,16 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		}
 	}
 
-	k8sClientConfig := k8sclient.ClientsConfig{
-		Logger:     r.logger,
-		RestConfig: restConfig,
-	}
-	k8sClients, err := k8sclient.NewClients(k8sClientConfig)
-	if err != nil {
-		return microerror.Mask(err)
+	var k8sClients k8sclient.Interface
+	{
+		c := k8sclient.ClientsConfig{
+			Logger:     r.logger,
+			RestConfig: restConfig,
+		}
+		k8sClients, err = k8sclient.NewClients(c)
+		if err != nil {
+			return microerror.Mask(err)
+		}
 	}
 
 	err = r.ensureCRDs(ctx, k8sClients)
@@ -98,7 +101,7 @@ func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface)
 
 	{
 		for _, crdName := range crds {
-			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensuring %#q CRD exists", crdName))
+			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensuring %#q CRD", crdName))
 
 			err := k8sClients.CRDClient().EnsureCreated(ctx, crd.LoadV1("application.giantswarm.io", crdName), backoff.NewMaxRetries(7, 1*time.Second))
 			if err != nil {
