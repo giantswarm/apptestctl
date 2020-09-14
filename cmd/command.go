@@ -12,11 +12,6 @@ import (
 	"github.com/giantswarm/apptestctl/pkg/project"
 )
 
-const (
-	name        = "apptestctl"
-	description = "Command line development utility."
-)
-
 type Config struct {
 	Logger micrologger.Logger
 	Stderr io.Writer
@@ -74,7 +69,7 @@ func New(config Config) (*cobra.Command, error) {
 	}
 
 	c := &cobra.Command{
-		Use:          name,
+		Use:          project.Name(),
 		Short:        project.Description(),
 		Long:         project.Description(),
 		RunE:         r.Run,
