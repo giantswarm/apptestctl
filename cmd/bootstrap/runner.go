@@ -22,11 +22,10 @@ import (
 )
 
 type runner struct {
-	clients k8sclient.Interface
-	flag    *flag
-	logger  micrologger.Logger
-	stdout  io.Writer
-	stderr  io.Writer
+	flag   *flag
+	logger micrologger.Logger
+	stdout io.Writer
+	stderr io.Writer
 }
 
 func (r *runner) Run(cmd *cobra.Command, args []string) error {
