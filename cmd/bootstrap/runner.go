@@ -267,10 +267,11 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installing %#q", name))
 
+		// ReleaseName has unique suffix like in the control plane so the test
+		// app CRs need to use 0.0.0 for the version label.
 		opts := helmclient.InstallOptions{
 			ReleaseName: fmt.Sprintf("%s-unique", name),
 		}
-
 		err = helmClient.InstallReleaseFromTarball(ctx,
 			operatorTarballPath,
 			namespace,
