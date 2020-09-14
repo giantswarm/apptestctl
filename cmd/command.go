@@ -8,6 +8,7 @@ import (
 	"github.com/giantswarm/micrologger"
 	"github.com/spf13/cobra"
 
+	"github.com/giantswarm/apptestctl/cmd/bootstrap"
 	"github.com/giantswarm/apptestctl/cmd/version"
 	"github.com/giantswarm/apptestctl/pkg/project"
 )
@@ -41,6 +42,20 @@ func New(config Config) (*cobra.Command, error) {
 	}
 
 	var err error
+
+	var bootstrapCmd *cobra.Command
+	{
+		c := bootstrap.Config{
+			Logger: config.Logger,
+			Stderr: config.Stderr,
+			Stdout: config.Stdout,
+		}
+
+		bootstrapCmd, err = bootstrap.New(c)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+	}
 
 	var versionCmd *cobra.Command
 	{
@@ -78,6 +93,7 @@ func New(config Config) (*cobra.Command, error) {
 
 	f.Init(c)
 
+	c.AddCommand(bootstrapCmd)
 	c.AddCommand(versionCmd)
 
 	return c, nil
