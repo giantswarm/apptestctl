@@ -140,7 +140,7 @@ func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface)
 
 	{
 		for _, crdName := range crds {
-			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensuring %#q CRD exists", crdName))
+			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensuring %#q CRD", crdName))
 
 			err := k8sClients.CRDClient().EnsureCreated(ctx, crd.LoadV1("application.giantswarm.io", crdName), backoff.NewMaxRetries(7, 1*time.Second))
 			if err != nil {
