@@ -40,7 +40,7 @@ func TestBootstrap(t *testing.T) {
 			config.Logger.Log("level", "debug", "message", fmt.Sprintf("failed to get app CR status '%s': retrying in %s", helmclient.StatusDeployed, t), "stack", fmt.Sprintf("%v", err))
 		}
 
-		b := backoff.NewExponential(20*time.Minute, 60*time.Second)
+		b := backoff.NewConstant(20*time.Minute, 60*time.Second)
 		err := backoff.RetryNotify(o, b, n)
 		if err != nil {
 			t.Fatalf("expected %#v got %#v", nil, err)
