@@ -10,10 +10,6 @@ import (
 	"github.com/giantswarm/apptestctl/integration/env"
 )
 
-const (
-	namespace = "giantswarm"
-)
-
 type Config struct {
 	K8sClients k8sclient.Interface
 	Logger     micrologger.Logger

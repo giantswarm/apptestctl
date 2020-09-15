@@ -6,76 +6,46 @@ import (
 	"context"
 	"fmt"
 	"testing"
+	"time"
 
-	"github.com/giantswarm/apiextensions/v2/pkg/apis/application/v1alpha1"
-	"github.com/giantswarm/apiextensions/v2/pkg/label"
+	"github.com/giantswarm/backoff"
+	"github.com/giantswarm/helmclient/v2/pkg/helmclient"
+	"github.com/giantswarm/microerror"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/giantswarm/apptestctl/integration/key"
 )
 
-// TestBootstrap TODO
+// TestBootstrap ensures that the chartmuseum app CR is deployed. This confirms
+// that the app platform is installed and can deploy app CRs.
 //
 func TestBootstrap(t *testing.T) {
 	ctx := context.Background()
 
-	var err error
-
 	{
-		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating %#q appcatalog cr", key.DefaultCatalogName()))
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensuring %#q app CR is deployed", key.ChartMuseumAppName()))
 
-		appCatalogCR := &v1alpha1.AppCatalog{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: key.DefaultCatalogName(),
-				Labels: map[string]string{
-					// Processed by app-operator-unique.
-					label.AppOperatorVersion: "0.0.0",
-				},
-			},
-			Spec: v1alpha1.AppCatalogSpec{
-				Description: key.DefaultCatalogName(),
-				Title:       key.DefaultCatalogName(),
-				Storage: v1alpha1.AppCatalogSpecStorage{
-					Type: "helm",
-					URL:  key.DefaultCatalogStorageURL(),
-				},
-			},
+		o := func() error {
+			app, err := config.K8sClients.G8sClient().ApplicationV1alpha1().Apps(key.Namespace()).Get(ctx, key.ChartMuseumAppName(), metav1.GetOptions{})
+			if err != nil {
+				return microerror.Mask(err)
+			}
+			if app.Status.Release.Status != helmclient.StatusDeployed {
+				return microerror.Maskf(executionFailedError, "waiting for %#q, current %#q", helmclient.StatusDeployed, app.Status.Release.Status)
+			}
+			return nil
 		}
-		_, err = config.K8sClients.G8sClient().ApplicationV1alpha1().AppCatalogs().Create(ctx, appCatalogCR, metav1.CreateOptions{})
+
+		n := func(err error, t time.Duration) {
+			config.Logger.Log("level", "debug", "message", fmt.Sprintf("failed to get app CR status '%s': retrying in %s", helmclient.StatusDeployed, t), "stack", fmt.Sprintf("%v", err))
+		}
+
+		b := backoff.NewExponential(20*time.Minute, 60*time.Second)
+		err := backoff.RetryNotify(o, b, n)
 		if err != nil {
 			t.Fatalf("expected %#v got %#v", nil, err)
 		}
 
-		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created %#q appcatalog cr", key.DefaultCatalogName()))
-	}
-
-	{
-		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating %#q app cr", key.TestAppReleaseName()))
-
-		appCR := &v1alpha1.App{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      key.TestAppReleaseName(),
-				Namespace: key.Namespace(),
-				Labels: map[string]string{
-					// Processed by app-operator-unique.
-					label.AppOperatorVersion: "0.0.0",
-				},
-			},
-			Spec: v1alpha1.AppSpec{
-				Catalog: key.DefaultCatalogName(),
-				KubeConfig: v1alpha1.AppSpecKubeConfig{
-					InCluster: true,
-				},
-				Name:      key.TestAppReleaseName(),
-				Namespace: key.Namespace(),
-				Version:   "0.1.0",
-			},
-		}
-		_, err = config.K8sClients.G8sClient().ApplicationV1alpha1().Apps(key.Namespace()).Create(ctx, appCR, metav1.CreateOptions{})
-		if err != nil {
-			t.Fatalf("expected %#v got %#v", nil, err)
-		}
-
-		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating %#q app cr", key.TestAppReleaseName()))
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensured %#q app CR is deployed", key.ChartMuseumAppName()))
 	}
 }
