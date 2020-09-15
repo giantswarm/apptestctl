@@ -279,6 +279,7 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 			opts)
 		if helmclient.IsReleaseAlreadyExists(err) {
 			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("%#q already installed", name))
+			return nil
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
