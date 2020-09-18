@@ -122,6 +122,11 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		return microerror.Mask(err)
 	}
 
+	err = r.installAppCatalogs(ctx, k8sClients)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
 	err = r.installChartMuseum(ctx, k8sClients)
 	if err != nil {
 		return microerror.Mask(err)
@@ -226,7 +231,7 @@ func (r *runner) ensurePriorityClass(ctx context.Context, k8sClients k8sclient.I
 	return nil
 }
 
-func (r *runner) installChartMuseum(ctx context.Context, k8sClients k8sclient.Interface) error {
+func (r *runner) installAppCatalogs(ctx context.Context, k8sClients k8sclient.Interface) error {
 	var err error
 
 	catalogs := map[string]string{
@@ -263,6 +268,12 @@ func (r *runner) installChartMuseum(ctx context.Context, k8sClients k8sclient.In
 
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created %#q appcatalog cr", name))
 	}
+
+	return nil
+}
+
+func (r *runner) installChartMuseum(ctx context.Context, k8sClients k8sclient.Interface) error {
+	var err error
 
 	{
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating %#q app cr", chartMuseumName))
