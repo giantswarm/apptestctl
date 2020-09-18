@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
 
+- Add initial version that bootstraps app-operator, chart-operator and chartmuseum.
 
 [Unreleased]: https://github.com/giantswarm/apptestctl/tree/master
