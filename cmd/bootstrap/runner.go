@@ -6,7 +6,9 @@ import (
 	"io"
 	"time"
 
+	"github.com/giantswarm/apiextensions/v2/pkg/apis/application/v1alpha1"
 	"github.com/giantswarm/apiextensions/v2/pkg/crd"
+	"github.com/giantswarm/apiextensions/v2/pkg/label"
 	"github.com/giantswarm/appcatalog"
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/helmclient/v2/pkg/helmclient"
@@ -25,10 +27,15 @@ import (
 )
 
 const (
-	appOperatorVersion                = "2.2.0"
-	chartOperatorVersion              = "2.3.1"
-	controlPlaneTestCatalogStorageURL = "https://giantswarm.github.io/control-plane-catalog/"
-	namespace                         = "giantswarm"
+	appOperatorVersion            = "2.2.0"
+	chartMuseumName               = "chartmuseum"
+	chartMuseumCatalogStorageURL  = "http://chartmuseum-chartmuseum.giantswarm.svc.cluster.local:8080/charts/"
+	chartMuseumVersion            = "2.13.3"
+	chartOperatorVersion          = "2.3.1"
+	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-catalog/"
+	helmStableCatalogName         = "helm-stable"
+	helmStableCatalogStorageURL   = "https://kubernetes-charts.storage.googleapis.com/"
+	namespace                     = "giantswarm"
 )
 
 type runner struct {
@@ -111,6 +118,16 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	}
 
 	err = r.installOperators(ctx, helmClient)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	err = r.installAppCatalogs(ctx, k8sClients)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	err = r.installChartMuseum(ctx, k8sClients)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -214,6 +231,86 @@ func (r *runner) ensurePriorityClass(ctx context.Context, k8sClients k8sclient.I
 	return nil
 }
 
+func (r *runner) installAppCatalogs(ctx context.Context, k8sClients k8sclient.Interface) error {
+	var err error
+
+	catalogs := map[string]string{
+		chartMuseumName:       chartMuseumCatalogStorageURL,
+		helmStableCatalogName: helmStableCatalogStorageURL,
+	}
+
+	for name, url := range catalogs {
+		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating %#q appcatalog cr", name))
+
+		appCatalogCR := &v1alpha1.AppCatalog{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: name,
+				Labels: map[string]string{
+					// Processed by app-operator-unique.
+					label.AppOperatorVersion: "0.0.0",
+				},
+			},
+			Spec: v1alpha1.AppCatalogSpec{
+				Description: name,
+				Title:       name,
+				Storage: v1alpha1.AppCatalogSpecStorage{
+					Type: "helm",
+					URL:  url,
+				},
+			},
+		}
+		_, err = k8sClients.G8sClient().ApplicationV1alpha1().AppCatalogs().Create(ctx, appCatalogCR, metav1.CreateOptions{})
+		if apierrors.IsAlreadyExists(err) {
+			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("%#q appcatalog CR already exists", appCatalogCR.Name))
+		} else if err != nil {
+			return microerror.Mask(err)
+		}
+
+		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created %#q appcatalog cr", name))
+	}
+
+	return nil
+}
+
+func (r *runner) installChartMuseum(ctx context.Context, k8sClients k8sclient.Interface) error {
+	var err error
+
+	{
+		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating %#q app cr", chartMuseumName))
+
+		appCR := &v1alpha1.App{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      chartMuseumName,
+				Namespace: namespace,
+				Labels: map[string]string{
+					// Processed by app-operator-unique.
+					label.AppOperatorVersion: "0.0.0",
+				},
+			},
+			Spec: v1alpha1.AppSpec{
+				Catalog: helmStableCatalogName,
+				KubeConfig: v1alpha1.AppSpecKubeConfig{
+					InCluster: true,
+				},
+				Name:      chartMuseumName,
+				Namespace: namespace,
+				Version:   chartMuseumVersion,
+			},
+		}
+		_, err = k8sClients.G8sClient().ApplicationV1alpha1().Apps(namespace).Create(ctx, appCR, metav1.CreateOptions{})
+		if apierrors.IsAlreadyExists(err) {
+			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("%#q app CR already exists", appCR.Name))
+			return nil
+		} else if err != nil {
+			return microerror.Mask(err)
+		}
+
+		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created %#q app cr", chartMuseumName))
+	}
+
+	return nil
+}
+
 func (r *runner) installOperators(ctx context.Context, helmClient helmclient.Interface) error {
 	var err error
 
@@ -239,7 +336,7 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 	{
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("getting tarball URL for %#q", name))
 
-		operatorTarballURL, err := appcatalog.GetLatestChart(ctx, controlPlaneTestCatalogStorageURL, name, version)
+		operatorTarballURL, err := appcatalog.GetLatestChart(ctx, controlPlaneCatalogStorageURL, name, version)
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -277,7 +374,10 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 			namespace,
 			nil,
 			opts)
-		if helmclient.IsReleaseAlreadyExists(err) {
+		if helmclient.IsCannotReuseRelease(err) {
+			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("%#q already installed", name))
+			return nil
+		} else if helmclient.IsReleaseAlreadyExists(err) {
 			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("%#q already installed", name))
 			return nil
 		} else if err != nil {
