@@ -6,9 +6,19 @@ orbs:
 workflows:
   test:
     jobs:
-      - architect/go-test:
-          name: go-test
+      - architect/go-build:
+          context: architect
+          name: go-build-apptestctl
+          binary: apptestctl
           filters:
             # Trigger job also on git tag.
             tags:
               only: /^v.*/
+
+      - architect/integration-test:
+          context: architect
+          name: integration-test-bootstrap
+          setup-script: "integration/test/bootstrap/setup.sh"
+          test-dir: "integration/test/bootstrap"
+          requires:
+            - go-build-apptestctl
