@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd project/
-make
-
 # Start the bootstrap process.
+make
 ./apptestctl bootstrap --kubeconfig="$(kind get kubeconfig)"
