@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd project/
-go install .
+make
 
 # Start the bootstrap process.
-apptestctl bootstrap --kubeconfig="$(kind get kubeconfig)"
+./apptestctl bootstrap --kubeconfig="$(kind get kubeconfig)"
