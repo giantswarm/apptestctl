@@ -27,11 +27,11 @@ import (
 )
 
 const (
-	appOperatorVersion            = "2.2.0"
+	appOperatorVersion            = "2.3.2"
 	chartMuseumName               = "chartmuseum"
 	chartMuseumCatalogStorageURL  = "http://chartmuseum-chartmuseum.giantswarm.svc.cluster.local:8080/charts/"
 	chartMuseumVersion            = "2.13.3"
-	chartOperatorVersion          = "2.3.1"
+	chartOperatorVersion          = "2.3.3"
 	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-catalog/"
 	helmStableCatalogName         = "helm-stable"
 	helmStableCatalogStorageURL   = "https://kubernetes-charts.storage.googleapis.com/"
