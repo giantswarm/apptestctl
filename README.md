@@ -4,6 +4,15 @@
 
 Command line tool for using the Giant Swarm app platform in integration tests.
 
+## Installation
+
+This project uses Go modules. Be sure to have it outside your `$GOPATH` or
+set `GO111MODULE=on` environment variable. Then regular `go install` should do
+the trick. Alternatively the following one-liner may help.
+
+```sh
+GO111MODULE=on go install -ldflags "-X 'github.com/giantswarm/apptestctl/pkg/project.gitSHA=$(git rev-parse HEAD)'" .
+
 # How to use this 
 
 After creating the `kind` cluster on your local machine, type below command. 
