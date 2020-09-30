@@ -297,7 +297,6 @@ func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interfa
 				Name:          chartMuseumName,
 				Namespace:     namespace,
 				Version:       chartMuseumVersion,
-				WaitForDeploy: false,
 			},
 		}
 		err = appTest.InstallApps(ctx, apps)
