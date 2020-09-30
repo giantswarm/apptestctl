@@ -10,6 +10,7 @@ import (
 	"github.com/giantswarm/apiextensions/v2/pkg/crd"
 	"github.com/giantswarm/apiextensions/v2/pkg/label"
 	"github.com/giantswarm/appcatalog"
+	"github.com/giantswarm/apptest"
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/helmclient/v2/pkg/helmclient"
 	"github.com/giantswarm/k8sclient/v4/pkg/k8sclient"
@@ -27,11 +28,11 @@ import (
 )
 
 const (
-	appOperatorVersion            = "2.2.0"
+	appOperatorVersion            = "2.3.2"
 	chartMuseumName               = "chartmuseum"
 	chartMuseumCatalogStorageURL  = "http://chartmuseum-chartmuseum.giantswarm.svc.cluster.local:8080/charts/"
 	chartMuseumVersion            = "2.13.3"
-	chartOperatorVersion          = "2.3.1"
+	chartOperatorVersion          = "2.3.3"
 	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-catalog/"
 	helmStableCatalogName         = "helm-stable"
 	helmStableCatalogStorageURL   = "https://kubernetes-charts.storage.googleapis.com/"
@@ -102,6 +103,18 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		}
 	}
 
+	var appTest apptest.Interface
+	{
+		c := apptest.Config{
+			K8sClient: k8sClients,
+			Logger:    r.logger,
+		}
+		appTest, err = apptest.New(c)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+	}
+
 	err = r.ensureCRDs(ctx, k8sClients)
 	if err != nil {
 		return microerror.Mask(err)
@@ -127,7 +140,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		return microerror.Mask(err)
 	}
 
-	err = r.installChartMuseum(ctx, k8sClients)
+	err = r.installChartMuseum(ctx, appTest)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -235,8 +248,7 @@ func (r *runner) installAppCatalogs(ctx context.Context, k8sClients k8sclient.In
 	var err error
 
 	catalogs := map[string]string{
-		chartMuseumName:       chartMuseumCatalogStorageURL,
-		helmStableCatalogName: helmStableCatalogStorageURL,
+		chartMuseumName: chartMuseumCatalogStorageURL,
 	}
 
 	for name, url := range catalogs {
@@ -272,36 +284,23 @@ func (r *runner) installAppCatalogs(ctx context.Context, k8sClients k8sclient.In
 	return nil
 }
 
-func (r *runner) installChartMuseum(ctx context.Context, k8sClients k8sclient.Interface) error {
+func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interface) error {
 	var err error
 
 	{
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating %#q app cr", chartMuseumName))
 
-		appCR := &v1alpha1.App{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      chartMuseumName,
-				Namespace: namespace,
-				Labels: map[string]string{
-					// Processed by app-operator-unique.
-					label.AppOperatorVersion: "0.0.0",
-				},
-			},
-			Spec: v1alpha1.AppSpec{
-				Catalog: helmStableCatalogName,
-				KubeConfig: v1alpha1.AppSpecKubeConfig{
-					InCluster: true,
-				},
-				Name:      chartMuseumName,
-				Namespace: namespace,
-				Version:   chartMuseumVersion,
+		apps := []apptest.App{
+			{
+				CatalogName: helmStableCatalogName,
+				CatalogURL:  helmStableCatalogStorageURL,
+				Name:        chartMuseumName,
+				Namespace:   namespace,
+				Version:     chartMuseumVersion,
 			},
 		}
-		_, err = k8sClients.G8sClient().ApplicationV1alpha1().Apps(namespace).Create(ctx, appCR, metav1.CreateOptions{})
-		if apierrors.IsAlreadyExists(err) {
-			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("%#q app CR already exists", appCR.Name))
-			return nil
-		} else if err != nil {
+		err = appTest.InstallApps(ctx, apps)
+		if err != nil {
 			return microerror.Mask(err)
 		}
 

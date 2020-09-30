@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Use apptest library to create chartmuseum app CR.
+- Update app-operator to v2.3.2.
+- Update chart-operator to v2.3.3.
+
 ## [0.1.0] - 2020-09-18
 
 ### Added
