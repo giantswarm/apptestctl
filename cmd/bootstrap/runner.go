@@ -292,11 +292,11 @@ func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interfa
 
 		apps := []apptest.App{
 			{
-				CatalogName:   helmStableCatalogName,
-				CatalogURL:    helmStableCatalogStorageURL,
-				Name:          chartMuseumName,
-				Namespace:     namespace,
-				Version:       chartMuseumVersion,
+				CatalogName: helmStableCatalogName,
+				CatalogURL:  helmStableCatalogStorageURL,
+				Name:        chartMuseumName,
+				Namespace:   namespace,
+				Version:     chartMuseumVersion,
 			},
 		}
 		err = appTest.InstallApps(ctx, apps)
