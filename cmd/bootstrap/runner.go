@@ -130,9 +130,13 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		return microerror.Mask(err)
 	}
 
-	err = r.installOperators(ctx, helmClient)
-	if err != nil {
-		return microerror.Mask(err)
+	if r.flag.InstallOperators {
+		err = r.installOperators(ctx, helmClient)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+	} else {
+		r.logger.LogCtx(ctx, "level", "debug", "message", "skipping installing operators")
 	}
 
 	err = r.installAppCatalogs(ctx, k8sClients)

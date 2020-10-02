@@ -7,14 +7,17 @@ import (
 )
 
 const (
-	kubeconfig = "kubeconfig"
+	installOperators = "install-operators"
+	kubeconfig       = "kubeconfig"
 )
 
 type flag struct {
-	KubeConfig string
+	InstallOperators bool
+	KubeConfig       string
 }
 
 func (f *flag) Init(cmd *cobra.Command) {
+	cmd.Flags().BoolVarP(&f.InstallOperators, installOperators, "o", true, "Install app-operator and chart-operator")
 	cmd.Flags().StringVarP(&f.KubeConfig, kubeconfig, "k", "", "Explicit kubeconfig for the target cluster")
 }
 
