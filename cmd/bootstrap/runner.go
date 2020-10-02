@@ -151,6 +151,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface) error {
 	// Ensure Application group CRDs are created.
 	crds := []string{
+		"AppCatalogEntry",
 		"AppCatalog",
 		"App",
 		"Chart",

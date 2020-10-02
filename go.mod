@@ -3,7 +3,7 @@ module github.com/giantswarm/apptestctl
 go 1.14
 
 require (
-	github.com/giantswarm/apiextensions/v2 v2.4.0
+	github.com/giantswarm/apiextensions/v2 v2.5.4-0.20201002123447-c595b53dd3aa
 	github.com/giantswarm/appcatalog v0.2.7
 	github.com/giantswarm/apptest v0.1.0
 	github.com/giantswarm/backoff v0.2.0
