@@ -295,12 +295,16 @@ func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interfa
 	{
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating %#q app cr", chartMuseumName))
 
+		valuesYAML := `persistence:
+  enabled: "true"`
+
 		apps := []apptest.App{
 			{
 				CatalogName: helmStableCatalogName,
 				CatalogURL:  helmStableCatalogStorageURL,
 				Name:        chartMuseumName,
 				Namespace:   namespace,
+				ValuesYAML:  valuesYAML,
 				Version:     chartMuseumVersion,
 			},
 		}
