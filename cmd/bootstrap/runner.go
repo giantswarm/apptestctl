@@ -21,6 +21,8 @@ import (
 	"github.com/spf13/cobra"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
+	policyv1beta1 "k8s.io/api/policy/v1beta1"
+	rbacv1 "k8s.io/api/rbac/v1"
 	schedulingv1 "k8s.io/api/scheduling/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -140,6 +142,11 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	}
 
 	err = r.installAppCatalogs(ctx, k8sClients)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	err = r.ensureChartMuseumPSP(ctx, k8sClients)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -289,6 +296,108 @@ func (r *runner) installAppCatalogs(ctx context.Context, k8sClients k8sclient.In
 	return nil
 }
 
+func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.Interface) error {
+	name := "chartmuseum-psp"
+	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensuring psp %#q", name))
+
+	t := true
+
+	o := func() error {
+		{
+			clusterRole := &rbacv1.ClusterRole{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: name,
+				},
+				Rules: []rbacv1.PolicyRule{
+					{
+						APIGroups:     []string{"extensions"},
+						Resources:     []string{"podsecuritypolicies"},
+						ResourceNames: []string{name},
+						Verbs:         []string{"use"},
+					},
+				},
+			}
+			_, err := k8sClients.K8sClient().RbacV1().ClusterRoles().Create(ctx, clusterRole, metav1.CreateOptions{})
+			if apierrors.IsAlreadyExists(err) {
+				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("clusterRole %#q already exists", name))
+				// fall through
+			} else if err != nil {
+				return microerror.Mask(err)
+			}
+		}
+		{
+			clusterRoleBinding := &rbacv1.ClusterRoleBinding{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: name,
+				},
+				Subjects: []rbacv1.Subject{
+					{
+						Kind:      "ServiceAccount",
+						Name:      "chartmuseum",
+						Namespace: "giantswarm",
+					},
+				},
+				RoleRef: rbacv1.RoleRef{
+					Kind:     "ClusterRole",
+					Name:     name,
+					APIGroup: "rbac.authorization.k8s.io",
+				},
+			}
+			_, err := k8sClients.K8sClient().RbacV1().ClusterRoleBindings().Create(ctx, clusterRoleBinding, metav1.CreateOptions{})
+			if apierrors.IsAlreadyExists(err) {
+				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("clusterRoleBinding %#q already exists", name))
+				// fall through
+			} else if err != nil {
+				return microerror.Mask(err)
+			}
+		}
+		{
+			psp := &policyv1beta1.PodSecurityPolicy{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: name,
+				},
+				Spec: policyv1beta1.PodSecurityPolicySpec{
+					AllowPrivilegeEscalation: &t,
+					Volumes: []policyv1beta1.FSType{
+						policyv1beta1.All,
+					},
+					RunAsUser: policyv1beta1.RunAsUserStrategyOptions{
+						Rule: policyv1beta1.RunAsUserStrategyRunAsAny,
+					},
+					SupplementalGroups: policyv1beta1.SupplementalGroupsStrategyOptions{
+						Rule: policyv1beta1.SupplementalGroupsStrategyRunAsAny,
+					},
+					FSGroup: policyv1beta1.FSGroupStrategyOptions{
+						Rule: policyv1beta1.FSGroupStrategyRunAsAny,
+					},
+					SELinux: policyv1beta1.SELinuxStrategyOptions{
+						Rule: policyv1beta1.SELinuxStrategyRunAsAny,
+					},
+				},
+			}
+			_, err := k8sClients.K8sClient().PolicyV1beta1().PodSecurityPolicies().Create(ctx, psp, metav1.CreateOptions{})
+			if apierrors.IsAlreadyExists(err) {
+				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("psp %#q already exists", name))
+				// fall through
+			} else if err != nil {
+				return microerror.Mask(err)
+			}
+		}
+
+		return nil
+	}
+	b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
+
+	err := backoff.Retry(o, b)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensured psp %#q", name))
+
+	return nil
+}
+
 func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interface) error {
 	var err error
 
@@ -296,7 +405,10 @@ func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interfa
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating %#q app cr", chartMuseumName))
 
 		valuesYAML := `persistence:
-  enabled: "true"`
+  enabled: "true"
+serviceAccount:
+  name: "chartmuseum"
+  create: "true"`
 
 		apps := []apptest.App{
 			{
