@@ -17,6 +17,7 @@ import (
 	"github.com/giantswarm/k8sclient/v4/pkg/k8srestconfig"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
+	"github.com/giantswarm/to"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	corev1 "k8s.io/api/core/v1"
@@ -300,8 +301,6 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 	name := "chartmuseum-psp"
 	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensuring psp %#q", name))
 
-	t := true
-
 	o := func() error {
 		{
 			clusterRole := &rbacv1.ClusterRole{
@@ -357,7 +356,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 					Name: name,
 				},
 				Spec: policyv1beta1.PodSecurityPolicySpec{
-					AllowPrivilegeEscalation: &t,
+					AllowPrivilegeEscalation: to.BoolP(true),
 					Volumes: []policyv1beta1.FSType{
 						policyv1beta1.All,
 					},
