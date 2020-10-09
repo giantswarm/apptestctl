@@ -407,7 +407,10 @@ func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interfa
   enabled: "true"
 serviceAccount:
   name: "chartmuseum"
-  create: "true"`
+  create: "true"
+env:
+  open:
+    DISABLE_API: false`
 
 		apps := []apptest.App{
 			{
