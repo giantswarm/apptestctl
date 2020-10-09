@@ -16,6 +16,7 @@ workflows:
               only: /^v.*/
 
       - architect/push-to-docker:
+          context: architect
           name: push-standup-to-quay
           image: "quay.io/giantswarm/apptestctl"
           username_envar: "QUAY_USERNAME"
