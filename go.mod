@@ -11,6 +11,7 @@ require (
 	github.com/giantswarm/k8sclient/v4 v4.0.0
 	github.com/giantswarm/microerror v0.2.1
 	github.com/giantswarm/micrologger v0.3.3
+	github.com/giantswarm/to v0.3.0
 	github.com/spf13/afero v1.3.4
 	github.com/spf13/cobra v1.0.0
 	k8s.io/api v0.18.9
