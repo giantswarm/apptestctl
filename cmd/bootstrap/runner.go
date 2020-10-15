@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"time"
@@ -22,18 +23,21 @@ import (
 	"github.com/spf13/cobra"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
+	networkingv1 "k8s.io/api/networking/v1"
 	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	schedulingv1 "k8s.io/api/scheduling/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/rest"
 )
 
 const (
 	appOperatorVersion            = "2.3.2"
 	chartMuseumName               = "chartmuseum"
-	chartMuseumCatalogStorageURL  = "http://chartmuseum-chartmuseum.giantswarm.svc.cluster.local:8080/charts/"
+	chartMuseumCatalogStorageURL  = "http://chartmuseum-chartmuseum:8080/charts/"
 	chartMuseumVersion            = "2.13.3"
 	chartOperatorVersion          = "2.3.3"
 	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-catalog/"
@@ -47,6 +51,12 @@ type runner struct {
 	logger micrologger.Logger
 	stdout io.Writer
 	stderr io.Writer
+}
+
+type Patch struct {
+	Op    string `json:"op"`
+	Path  string `json:"path"`
+	Value string `json:"value,omitempty"`
 }
 
 func (r *runner) Run(cmd *cobra.Command, args []string) error {
@@ -138,6 +148,12 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		if err != nil {
 			return microerror.Mask(err)
 		}
+
+		err = r.patchChartOperatorDeployment(ctx, k8sClients)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+
 	} else {
 		r.logger.LogCtx(ctx, "level", "debug", "message", "skipping installing operators")
 	}
@@ -333,7 +349,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 					{
 						Kind:      "ServiceAccount",
 						Name:      "chartmuseum",
-						Namespace: "giantswarm",
+						Namespace: namespace,
 					},
 				},
 				RoleRef: rbacv1.RoleRef{
@@ -377,6 +393,48 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 			_, err := k8sClients.K8sClient().PolicyV1beta1().PodSecurityPolicies().Create(ctx, psp, metav1.CreateOptions{})
 			if apierrors.IsAlreadyExists(err) {
 				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("psp %#q already exists", name))
+				// fall through
+			} else if err != nil {
+				return microerror.Mask(err)
+			}
+		}
+
+		{
+			tcp := corev1.ProtocolTCP
+			chartmuseumPort := intstr.FromInt(8080)
+
+			np := &networkingv1.NetworkPolicy{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "chartmuseum",
+					Namespace: namespace,
+				},
+				Spec: networkingv1.NetworkPolicySpec{
+					PodSelector: metav1.LabelSelector{
+						MatchLabels: map[string]string{
+							"app":     "chartmuseum",
+							"release": "chartmuseum",
+						},
+					},
+					Egress: []networkingv1.NetworkPolicyEgressRule{},
+					Ingress: []networkingv1.NetworkPolicyIngressRule{
+						{
+							Ports: []networkingv1.NetworkPolicyPort{
+								{
+									Protocol: &tcp,
+									Port:     &chartmuseumPort,
+								},
+							},
+						},
+					},
+					PolicyTypes: []networkingv1.PolicyType{
+						networkingv1.PolicyTypeIngress,
+						networkingv1.PolicyTypeEgress,
+					},
+				},
+			}
+			_, err := k8sClients.K8sClient().NetworkingV1().NetworkPolicies(namespace).Create(ctx, np, metav1.CreateOptions{})
+			if apierrors.IsAlreadyExists(err) {
+				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("networkpolicy %#q already exists", name))
 				// fall through
 			} else if err != nil {
 				return microerror.Mask(err)
@@ -508,6 +566,55 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installed %#q", name))
 	}
+
+	return nil
+}
+
+func (r *runner) patchChartOperatorDeployment(ctx context.Context, k8sClients k8sclient.Interface) error {
+	labelSelector := "app.kubernetes.io/instance=chart-operator-unique"
+	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("waiting for chart-operator with label selector %#q", labelSelector))
+
+	o := func() error {
+		list, err := k8sClients.K8sClient().AppsV1().Deployments(namespace).List(ctx, metav1.ListOptions{LabelSelector: labelSelector})
+		if apierrors.IsNotFound(err) || len(list.Items) != 1 {
+			r.logger.LogCtx(ctx, "level", "debug", "message", "chart-operator deployment not created yet")
+			// fall through
+		} else if err != nil {
+			return microerror.Mask(err)
+		}
+
+		patches := []Patch{
+			{
+				Op:   "remove",
+				Path: "/spec/template/spec/dnsConfig",
+			},
+			{
+				Op:    "replace",
+				Path:  "/spec/template/spec/dnsPolicy",
+				Value: "ClusterFirst",
+			},
+		}
+
+		bytes, err := json.Marshal(patches)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+
+		_, err = k8sClients.K8sClient().AppsV1().Deployments(namespace).Patch(ctx, list.Items[0].Name, types.JSONPatchType, bytes, metav1.PatchOptions{})
+		if err != nil {
+			return microerror.Mask(err)
+		}
+
+		return nil
+	}
+	b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
+
+	err := backoff.Retry(o, b)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("patching deployment for chart-operator with name %#q done", ""))
 
 	return nil
 }

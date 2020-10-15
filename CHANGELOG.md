@@ -14,7 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ensure PodSecurityPolicy for chartmuseum.
 - Enable ServiceAccount creation for chartmuseum.
 - Enable API of chartmuseum.
-- Add container build through CircleCI.
+- Container build through CircleCI.
+- NetworkPolicy to enable communication with chartmuseum.
+- Patching dnsConfig and dnsPolicy of chart-operator-unique deployment.
 
 ## [0.3.1] - 2020-10-08
 
