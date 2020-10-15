@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"time"
@@ -28,6 +29,7 @@ import (
 	schedulingv1 "k8s.io/api/scheduling/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/rest"
 )
@@ -49,6 +51,12 @@ type runner struct {
 	logger micrologger.Logger
 	stdout io.Writer
 	stderr io.Writer
+}
+
+type Patch struct {
+	Op    string `json:"op"`
+	Path  string `json:"path"`
+	Value string `json:"value,omitempty"`
 }
 
 func (r *runner) Run(cmd *cobra.Command, args []string) error {
@@ -575,12 +583,24 @@ func (r *runner) patchChartOperatorDeployment(ctx context.Context, k8sClients k8
 			return microerror.Mask(err)
 		}
 
-		d := list.Items[0]
+		patches := []Patch{
+			{
+				Op:   "remove",
+				Path: "/spec/template/spec/dnsConfig",
+			},
+			{
+				Op:    "replace",
+				Path:  "/spec/template/spec/dnsPolicy",
+				Value: "ClusterFirst",
+			},
+		}
 
-		d.Spec.Template.Spec.DNSConfig = nil
-		d.Spec.Template.Spec.DNSPolicy = corev1.DNSClusterFirst
+		bytes, err := json.Marshal(patches)
+		if err != nil {
+			return microerror.Mask(err)
+		}
 
-		_, err = k8sClients.K8sClient().AppsV1().Deployments(namespace).Update(ctx, &d, metav1.UpdateOptions{})
+		_, err = k8sClients.K8sClient().AppsV1().Deployments(namespace).Patch(ctx, list.Items[0].Name, types.JSONPatchType, bytes, metav1.PatchOptions{})
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -594,7 +614,7 @@ func (r *runner) patchChartOperatorDeployment(ctx context.Context, k8sClients k8
 		return microerror.Mask(err)
 	}
 
-	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("patching deployment for chart-operator with name %#q", ""))
+	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("patching deployment for chart-operator with name %#q done", ""))
 
 	return nil
 }
