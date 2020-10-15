@@ -568,9 +568,8 @@ func (r *runner) patchChartOperatorDeployment(ctx context.Context, k8sClients k8
 
 	o := func() error {
 		list, err := k8sClients.K8sClient().AppsV1().Deployments(namespace).List(ctx, metav1.ListOptions{LabelSelector: labelSelector})
-
 		if apierrors.IsNotFound(err) || len(list.Items) != 1 {
-			r.logger.LogCtx(ctx, "level", "debug", "message", "chart-operator deployment not ready yet")
+			r.logger.LogCtx(ctx, "level", "debug", "message", "chart-operator deployment not created yet")
 			// fall through
 		} else if err != nil {
 			return microerror.Mask(err)
@@ -582,7 +581,6 @@ func (r *runner) patchChartOperatorDeployment(ctx context.Context, k8sClients k8
 		d.Spec.Template.Spec.DNSPolicy = corev1.DNSClusterFirst
 
 		_, err = k8sClients.K8sClient().AppsV1().Deployments(namespace).Update(ctx, &d, metav1.UpdateOptions{})
-
 		if err != nil {
 			return microerror.Mask(err)
 		}
