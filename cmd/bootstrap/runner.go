@@ -119,8 +119,9 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	var appTest apptest.Interface
 	{
 		c := apptest.Config{
-			K8sClient: k8sClients,
-			Logger:    r.logger,
+			KubeConfig: r.flag.KubeConfig,
+
+			Logger: r.logger,
 		}
 		appTest, err = apptest.New(c)
 		if err != nil {
