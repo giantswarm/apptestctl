@@ -7,15 +7,15 @@ import (
 	"io"
 	"time"
 
-	"github.com/giantswarm/apiextensions/v2/pkg/apis/application/v1alpha1"
-	"github.com/giantswarm/apiextensions/v2/pkg/crd"
-	"github.com/giantswarm/apiextensions/v2/pkg/label"
+	"github.com/giantswarm/apiextensions/v3/pkg/apis/application/v1alpha1"
+	"github.com/giantswarm/apiextensions/v3/pkg/crd"
+	"github.com/giantswarm/apiextensions/v3/pkg/label"
 	"github.com/giantswarm/appcatalog"
 	"github.com/giantswarm/apptest"
 	"github.com/giantswarm/backoff"
-	"github.com/giantswarm/helmclient/v2/pkg/helmclient"
-	"github.com/giantswarm/k8sclient/v4/pkg/k8sclient"
-	"github.com/giantswarm/k8sclient/v4/pkg/k8srestconfig"
+	"github.com/giantswarm/helmclient/v3/pkg/helmclient"
+	"github.com/giantswarm/k8sclient/v5/pkg/k8sclient"
+	"github.com/giantswarm/k8sclient/v5/pkg/k8srestconfig"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/giantswarm/to"
@@ -119,8 +119,9 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	var appTest apptest.Interface
 	{
 		c := apptest.Config{
-			K8sClient: k8sClients,
-			Logger:    r.logger,
+			KubeConfig: r.flag.KubeConfig,
+
+			Logger: r.logger,
 		}
 		appTest, err = apptest.New(c)
 		if err != nil {
