@@ -40,7 +40,7 @@ const (
 	chartOperatorVersion          = "2.4.0"
 	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-catalog/"
 	helmStableCatalogName         = "helm-stable"
-	helmStableCatalogStorageURL   = "https://kubernetes-charts.storage.googleapis.com/"
+	helmStableCatalogStorageURL   = "https://charts.helm.sh/stable/packages/"
 	namespace                     = "giantswarm"
 )
 

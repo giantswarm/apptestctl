@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use apiextensions v3 and include replace for Giant Swarm CAPI fork. 
 - Add replace for moby v20.10.0-beta1 to fix build issue on darwin.
 - Optimize apps wait interval as app-operator has a status webhook.
+- Use new catalog URL for Helm Stable.
 
 ## [0.3.1] - 2020-10-08
 
