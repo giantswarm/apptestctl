@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/giantswarm/apiextensions/v3 v3.4.0
 	github.com/giantswarm/appcatalog v0.2.7
-	github.com/giantswarm/apptest v0.4.1-0.20201030140104-d7a74a9bb5a5
+	github.com/giantswarm/apptest v0.4.1
 	github.com/giantswarm/backoff v0.2.0
 	github.com/giantswarm/helmclient/v3 v3.0.0
 	github.com/giantswarm/k8sclient/v5 v5.0.0
