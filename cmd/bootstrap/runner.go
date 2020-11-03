@@ -149,6 +149,11 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		if err != nil {
 			return microerror.Mask(err)
 		}
+
+		err = r.patchChartOperatorDeployment(ctx, k8sClients)
+		if err != nil {
+			return microerror.Mask(err)
+		}
 	} else {
 		r.logger.LogCtx(ctx, "level", "debug", "message", "skipping installing operators")
 	}
@@ -500,10 +505,6 @@ func (r *runner) installOperators(ctx context.Context, helmClient helmclient.Int
 			return microerror.Mask(err)
 		}
 
-		err = r.patchChartOperatorDeployment(ctx, k8sClients)
-		if err != nil {
-			return microerror.Mask(err)
-		}
 	}
 
 	return nil
@@ -571,50 +572,54 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 }
 
 func (r *runner) patchChartOperatorDeployment(ctx context.Context, k8sClients k8sclient.Interface) error {
-	labelSelector := "app.kubernetes.io/instance=chart-operator-unique"
-	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("waiting for chart-operator with label selector %#q", labelSelector))
+	chartOperatorDeployment := "chart-operator-unique"
+
+	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("waiting for deployment %#q", chartOperatorDeployment))
 
 	o := func() error {
-		list, err := k8sClients.K8sClient().AppsV1().Deployments(namespace).List(ctx, metav1.ListOptions{LabelSelector: labelSelector})
-		if apierrors.IsNotFound(err) || len(list.Items) != 1 {
-			r.logger.LogCtx(ctx, "level", "debug", "message", "chart-operator deployment not created yet")
-			// fall through
+		deploy, err := k8sClients.K8sClient().AppsV1().Deployments(namespace).Get(ctx, chartOperatorDeployment, metav1.GetOptions{})
+		if apierrors.IsNotFound(err) {
+			return microerror.Maskf(executionFailedError, "deployment %#q in %#q not found", chartOperatorDeployment, namespace)
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
 
-		patches := []Patch{
-			{
-				Op:   "remove",
-				Path: "/spec/template/spec/dnsConfig",
-			},
-			{
-				Op:    "replace",
-				Path:  "/spec/template/spec/dnsPolicy",
-				Value: "ClusterFirst",
-			},
-		}
+		if deploy.Spec.Template.Spec.DNSPolicy != "ClusterFirst" {
+			patches := []Patch{
+				{
+					Op:   "remove",
+					Path: "/spec/template/spec/dnsConfig",
+				},
+				{
+					Op:    "replace",
+					Path:  "/spec/template/spec/dnsPolicy",
+					Value: "ClusterFirst",
+				},
+			}
 
-		bytes, err := json.Marshal(patches)
-		if err != nil {
-			return microerror.Mask(err)
-		}
+			bytes, err := json.Marshal(patches)
+			if err != nil {
+				return microerror.Mask(err)
+			}
 
-		_, err = k8sClients.K8sClient().AppsV1().Deployments(namespace).Patch(ctx, list.Items[0].Name, types.JSONPatchType, bytes, metav1.PatchOptions{})
-		if err != nil {
-			return microerror.Mask(err)
+			_, err = k8sClients.K8sClient().AppsV1().Deployments(namespace).Patch(ctx, chartOperatorDeployment, types.JSONPatchType, bytes, metav1.PatchOptions{})
+			if err != nil {
+				return microerror.Mask(err)
+			}
 		}
 
 		return nil
 	}
-	b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
 
-	err := backoff.Retry(o, b)
+	b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
+	n := backoff.NewNotifier(r.logger, ctx)
+
+	err := backoff.RetryNotify(o, b, n)
 	if err != nil {
 		return microerror.Mask(err)
 	}
 
-	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("patching deployment for chart-operator with name %#q done", ""))
+	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("patching deployment %#q done", chartOperatorDeployment))
 
 	return nil
 }
