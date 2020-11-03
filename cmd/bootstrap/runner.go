@@ -578,9 +578,7 @@ func (r *runner) patchChartOperatorDeployment(ctx context.Context, k8sClients k8
 
 	o := func() error {
 		deploy, err := k8sClients.K8sClient().AppsV1().Deployments(namespace).Get(ctx, chartOperatorDeployment, metav1.GetOptions{})
-		if apierrors.IsNotFound(err) {
-			return microerror.Maskf(executionFailedError, "deployment %#q in %#q not found", chartOperatorDeployment, namespace)
-		} else if err != nil {
+		if err != nil {
 			return microerror.Mask(err)
 		}
 
