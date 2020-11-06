@@ -14,7 +14,7 @@ require (
 	github.com/giantswarm/to v0.3.0
 	github.com/moby/term v0.0.0-20200915141129-7f0af18e79f2 // indirect
 	github.com/spf13/afero v1.4.1
-	github.com/spf13/cobra v1.0.0
+	github.com/spf13/cobra v1.1.1
 	gotest.tools/v3 v3.0.3 // indirect
 	k8s.io/api v0.18.9
 	k8s.io/apimachinery v0.18.9
