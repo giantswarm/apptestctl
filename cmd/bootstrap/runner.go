@@ -528,8 +528,8 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installing %#q", name))
 
-		// Set operator values so chart-operator DNS settings are correct.
-		// Merge with an empty set of values so YAML is parsed.
+		// Set control plane operator values so chart-operator DNS settings are
+		// correct. Merge with an empty set of values so YAML is parsed.
 		input := map[string][]byte{
 			"values": []byte(operatorValuesYAML),
 		}
