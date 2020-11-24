@@ -2,7 +2,6 @@ package bootstrap
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"time"
@@ -29,7 +28,6 @@ import (
 	schedulingv1 "k8s.io/api/scheduling/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/rest"
 )
@@ -146,11 +144,6 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 
 	if r.flag.InstallOperators {
 		err = r.installOperators(ctx, helmClient, k8sClients)
-		if err != nil {
-			return microerror.Mask(err)
-		}
-
-		err = r.patchChartOperatorDeployment(ctx, k8sClients)
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -551,10 +544,28 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 		opts := helmclient.InstallOptions{
 			ReleaseName: fmt.Sprintf("%s-unique", name),
 		}
+		// Values are set so that chart-operator DNS settings are correct.
+		values := map[string]interface{}{
+			"Installation": map[string]interface{}{
+				"V1": map[string]interface{}{
+					"Helm": map[string]interface{}{
+						"HTTP": map[string]string{
+							"ClientTimeout": "30s",
+						},
+						"Kubernetes": map[string]string{
+							"WaitTimeout": "180s",
+						},
+					},
+					"Registry": map[string]string{
+						"Domain": "quay.io",
+					},
+				},
+			},
+		}
 		err = helmClient.InstallReleaseFromTarball(ctx,
 			operatorTarballPath,
 			namespace,
-			nil,
+			values,
 			opts)
 		if helmclient.IsCannotReuseRelease(err) {
 			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("%#q already installed", name))
@@ -568,57 +579,6 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installed %#q", name))
 	}
-
-	return nil
-}
-
-func (r *runner) patchChartOperatorDeployment(ctx context.Context, k8sClients k8sclient.Interface) error {
-	chartOperatorDeployment := "chart-operator-unique"
-
-	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("waiting for deployment %#q", chartOperatorDeployment))
-
-	o := func() error {
-		deploy, err := k8sClients.K8sClient().AppsV1().Deployments(namespace).Get(ctx, chartOperatorDeployment, metav1.GetOptions{})
-		if err != nil {
-			return microerror.Mask(err)
-		}
-
-		if deploy.Spec.Template.Spec.DNSPolicy != "ClusterFirst" {
-			patches := []Patch{
-				{
-					Op:   "remove",
-					Path: "/spec/template/spec/dnsConfig",
-				},
-				{
-					Op:    "replace",
-					Path:  "/spec/template/spec/dnsPolicy",
-					Value: "ClusterFirst",
-				},
-			}
-
-			bytes, err := json.Marshal(patches)
-			if err != nil {
-				return microerror.Mask(err)
-			}
-
-			_, err = k8sClients.K8sClient().AppsV1().Deployments(namespace).Patch(ctx, chartOperatorDeployment, types.JSONPatchType, bytes, metav1.PatchOptions{})
-			if err != nil {
-				return microerror.Mask(err)
-			}
-		}
-
-		return nil
-	}
-
-	b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
-	n := backoff.NewNotifier(r.logger, ctx)
-
-	err := backoff.RetryNotify(o, b, n)
-	if err != nil {
-		return microerror.Mask(err)
-	}
-
-	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("patching deployment %#q done", chartOperatorDeployment))
 
 	return nil
 }
