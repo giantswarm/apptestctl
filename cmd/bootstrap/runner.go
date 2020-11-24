@@ -454,22 +454,13 @@ func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interfa
 	{
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating %#q app cr", chartMuseumName))
 
-		valuesYAML := `persistence:
-  enabled: "true"
-serviceAccount:
-  name: "chartmuseum"
-  create: "true"
-env:
-  open:
-    DISABLE_API: false`
-
 		apps := []apptest.App{
 			{
 				CatalogName:   helmStableCatalogName,
 				CatalogURL:    helmStableCatalogStorageURL,
 				Name:          chartMuseumName,
 				Namespace:     namespace,
-				ValuesYAML:    valuesYAML,
+				ValuesYAML:    chartMuseumValuesYAML,
 				Version:       chartMuseumVersion,
 				WaitForDeploy: r.flag.Wait,
 			},
@@ -505,8 +496,6 @@ func (r *runner) installOperators(ctx context.Context, helmClient helmclient.Int
 }
 
 func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Interface, name, version string) error {
-	var err error
-
 	var operatorTarballPath string
 	{
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("getting tarball URL for %#q", name))
@@ -539,28 +528,20 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installing %#q", name))
 
+		// Set operator values so chart-operator DNS settings are correct.
+		// Merge with an empty set of values so YAML is parsed.
+		input := map[string][]byte{
+			"values": []byte(operatorValuesYAML),
+		}
+		values, err := helmclient.MergeValues(input, map[string][]byte{})
+		if err != nil {
+			return microerror.Mask(err)
+		}
+
 		// ReleaseName has unique suffix like in the control plane so the test
 		// app CRs need to use 0.0.0 for the version label.
 		opts := helmclient.InstallOptions{
 			ReleaseName: fmt.Sprintf("%s-unique", name),
-		}
-		// Values are set so that chart-operator DNS settings are correct.
-		values := map[string]interface{}{
-			"Installation": map[string]interface{}{
-				"V1": map[string]interface{}{
-					"Helm": map[string]interface{}{
-						"HTTP": map[string]string{
-							"ClientTimeout": "30s",
-						},
-						"Kubernetes": map[string]string{
-							"WaitTimeout": "180s",
-						},
-					},
-					"Registry": map[string]string{
-						"Domain": "quay.io",
-					},
-				},
-			},
 		}
 		err = helmClient.InstallReleaseFromTarball(ctx,
 			operatorTarballPath,
