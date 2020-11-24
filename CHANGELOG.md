@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add wait flag for whether to wait for all components to be ready.
+
 ## [0.4.1] - 2020-11-03
 
 ### Added

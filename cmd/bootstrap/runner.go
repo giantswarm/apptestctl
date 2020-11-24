@@ -2,7 +2,6 @@ package bootstrap
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"time"
@@ -29,7 +28,6 @@ import (
 	schedulingv1 "k8s.io/api/scheduling/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/rest"
 )
@@ -146,11 +144,6 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 
 	if r.flag.InstallOperators {
 		err = r.installOperators(ctx, helmClient, k8sClients)
-		if err != nil {
-			return microerror.Mask(err)
-		}
-
-		err = r.patchChartOperatorDeployment(ctx, k8sClients)
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -461,23 +454,15 @@ func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interfa
 	{
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating %#q app cr", chartMuseumName))
 
-		valuesYAML := `persistence:
-  enabled: "true"
-serviceAccount:
-  name: "chartmuseum"
-  create: "true"
-env:
-  open:
-    DISABLE_API: false`
-
 		apps := []apptest.App{
 			{
-				CatalogName: helmStableCatalogName,
-				CatalogURL:  helmStableCatalogStorageURL,
-				Name:        chartMuseumName,
-				Namespace:   namespace,
-				ValuesYAML:  valuesYAML,
-				Version:     chartMuseumVersion,
+				CatalogName:   helmStableCatalogName,
+				CatalogURL:    helmStableCatalogStorageURL,
+				Name:          chartMuseumName,
+				Namespace:     namespace,
+				ValuesYAML:    chartMuseumValuesYAML,
+				Version:       chartMuseumVersion,
+				WaitForDeploy: r.flag.Wait,
 			},
 		}
 		err = appTest.InstallApps(ctx, apps)
@@ -511,8 +496,6 @@ func (r *runner) installOperators(ctx context.Context, helmClient helmclient.Int
 }
 
 func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Interface, name, version string) error {
-	var err error
-
 	var operatorTarballPath string
 	{
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("getting tarball URL for %#q", name))
@@ -545,6 +528,16 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installing %#q", name))
 
+		// Set control plane operator values so chart-operator DNS settings are
+		// correct. Merge with an empty set of values so YAML is parsed.
+		input := map[string][]byte{
+			"values": []byte(operatorValuesYAML),
+		}
+		values, err := helmclient.MergeValues(input, map[string][]byte{})
+		if err != nil {
+			return microerror.Mask(err)
+		}
+
 		// ReleaseName has unique suffix like in the control plane so the test
 		// app CRs need to use 0.0.0 for the version label.
 		opts := helmclient.InstallOptions{
@@ -553,7 +546,7 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 		err = helmClient.InstallReleaseFromTarball(ctx,
 			operatorTarballPath,
 			namespace,
-			nil,
+			values,
 			opts)
 		if helmclient.IsCannotReuseRelease(err) {
 			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("%#q already installed", name))
@@ -567,57 +560,6 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installed %#q", name))
 	}
-
-	return nil
-}
-
-func (r *runner) patchChartOperatorDeployment(ctx context.Context, k8sClients k8sclient.Interface) error {
-	chartOperatorDeployment := "chart-operator-unique"
-
-	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("waiting for deployment %#q", chartOperatorDeployment))
-
-	o := func() error {
-		deploy, err := k8sClients.K8sClient().AppsV1().Deployments(namespace).Get(ctx, chartOperatorDeployment, metav1.GetOptions{})
-		if err != nil {
-			return microerror.Mask(err)
-		}
-
-		if deploy.Spec.Template.Spec.DNSPolicy != "ClusterFirst" {
-			patches := []Patch{
-				{
-					Op:   "remove",
-					Path: "/spec/template/spec/dnsConfig",
-				},
-				{
-					Op:    "replace",
-					Path:  "/spec/template/spec/dnsPolicy",
-					Value: "ClusterFirst",
-				},
-			}
-
-			bytes, err := json.Marshal(patches)
-			if err != nil {
-				return microerror.Mask(err)
-			}
-
-			_, err = k8sClients.K8sClient().AppsV1().Deployments(namespace).Patch(ctx, chartOperatorDeployment, types.JSONPatchType, bytes, metav1.PatchOptions{})
-			if err != nil {
-				return microerror.Mask(err)
-			}
-		}
-
-		return nil
-	}
-
-	b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
-	n := backoff.NewNotifier(r.logger, ctx)
-
-	err := backoff.RetryNotify(o, b, n)
-	if err != nil {
-		return microerror.Mask(err)
-	}
-
-	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("patching deployment %#q done", chartOperatorDeployment))
 
 	return nil
 }
