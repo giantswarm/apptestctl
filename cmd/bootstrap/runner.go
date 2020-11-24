@@ -472,12 +472,13 @@ env:
 
 		apps := []apptest.App{
 			{
-				CatalogName: helmStableCatalogName,
-				CatalogURL:  helmStableCatalogStorageURL,
-				Name:        chartMuseumName,
-				Namespace:   namespace,
-				ValuesYAML:  valuesYAML,
-				Version:     chartMuseumVersion,
+				CatalogName:   helmStableCatalogName,
+				CatalogURL:    helmStableCatalogStorageURL,
+				Name:          chartMuseumName,
+				Namespace:     namespace,
+				ValuesYAML:    valuesYAML,
+				Version:       chartMuseumVersion,
+				WaitForDeploy: r.flag.Wait,
 			},
 		}
 		err = appTest.InstallApps(ctx, apps)
