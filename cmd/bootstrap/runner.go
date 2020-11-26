@@ -14,7 +14,6 @@ import (
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/helmclient/v3/pkg/helmclient"
 	"github.com/giantswarm/k8sclient/v5/pkg/k8sclient"
-	"github.com/giantswarm/k8sclient/v5/pkg/k8srestconfig"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/giantswarm/to"
@@ -30,6 +29,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 const (
@@ -78,15 +78,20 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 
 	var restConfig *rest.Config
 	{
-		c := k8srestconfig.Config{
-			Logger: r.logger,
-
-			KubeConfig: r.flag.KubeConfig,
-		}
-
-		restConfig, err = k8srestconfig.New(c)
-		if err != nil {
-			return microerror.Mask(err)
+		if r.flag.KubeConfig != "" {
+			bytes := []byte(r.flag.KubeConfig)
+			restConfig, err = clientcmd.RESTConfigFromKubeConfig(bytes)
+			if err != nil {
+				return microerror.Mask(err)
+			}
+		} else if r.flag.KubeConfigPath != "" {
+			restConfig, err = clientcmd.BuildConfigFromFlags("", r.flag.KubeConfigPath)
+			if err != nil {
+				return microerror.Mask(err)
+			}
+		} else {
+			// Shouldn't happen but returning error just in case.
+			return microerror.Maskf(invalidConfigError, "KubeConfig and KubeConfigPath must not be empty at the same time")
 		}
 	}
 
@@ -117,7 +122,8 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	var appTest apptest.Interface
 	{
 		c := apptest.Config{
-			KubeConfig: r.flag.KubeConfig,
+			KubeConfig:     r.flag.KubeConfig,
+			KubeConfigPath: r.flag.KubeConfigPath,
 
 			Logger: r.logger,
 		}
@@ -538,10 +544,12 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 			return microerror.Mask(err)
 		}
 
-		// ReleaseName has unique suffix like in the control plane so the test
-		// app CRs need to use 0.0.0 for the version label.
 		opts := helmclient.InstallOptions{
+			// ReleaseName has unique suffix like in the control plane so the test
+			// app CRs need to use 0.0.0 for the version label.
 			ReleaseName: fmt.Sprintf("%s-unique", name),
+			// Wait ensures that the status webhook is ready.
+			Wait: true,
 		}
 		err = helmClient.InstallReleaseFromTarball(ctx,
 			operatorTarballPath,
