@@ -1,6 +1,8 @@
 package bootstrap
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 
 	"github.com/giantswarm/microerror"
@@ -9,6 +11,7 @@ import (
 const (
 	installOperators = "install-operators"
 	kubeconfig       = "kubeconfig"
+	kubeconfigEnvVar = "KUBECONFIG"
 	kubeconfigPath   = "kubeconfig-path"
 	wait             = "wait"
 )
@@ -28,8 +31,8 @@ func (f *flag) Init(cmd *cobra.Command) {
 }
 
 func (f *flag) Validate() error {
-	if f.KubeConfig == "" && f.KubeConfigPath == "" {
-		return microerror.Maskf(invalidFlagError, "either --%s or --%s must be set", kubeconfig, kubeconfigPath)
+	if f.KubeConfig == "" && f.KubeConfigPath == "" && os.Getenv(kubeconfigEnvVar) == "" {
+		return microerror.Maskf(invalidFlagError, "either --%s or --%s or KUBECONFIG must be set", kubeconfig, kubeconfigPath)
 	} else if f.KubeConfig != "" && f.KubeConfigPath != "" {
 		return microerror.Maskf(invalidFlagError, "both --%s or --%s must not be set", kubeconfig, kubeconfigPath)
 	}

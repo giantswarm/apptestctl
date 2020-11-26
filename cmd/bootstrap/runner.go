@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 	"time"
 
 	"github.com/giantswarm/apiextensions/v3/pkg/apis/application/v1alpha1"
@@ -27,9 +28,12 @@ import (
 	schedulingv1 "k8s.io/api/scheduling/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+	clientcmdlatest "k8s.io/client-go/tools/clientcmd/api/latest"
+	"sigs.k8s.io/yaml"
 )
 
 const (
@@ -76,16 +80,45 @@ func (r *runner) Run(cmd *cobra.Command, args []string) error {
 func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) error {
 	var err error
 
+	var kubeConfig string
 	var restConfig *rest.Config
+
 	{
 		if r.flag.KubeConfig != "" {
-			bytes := []byte(r.flag.KubeConfig)
+			// Set kube config for passing to the apptest library.
+			kubeConfig = r.flag.KubeConfig
+
+			bytes := []byte(kubeConfig)
 			restConfig, err = clientcmd.RESTConfigFromKubeConfig(bytes)
 			if err != nil {
 				return microerror.Mask(err)
 			}
 		} else if r.flag.KubeConfigPath != "" {
 			restConfig, err = clientcmd.BuildConfigFromFlags("", r.flag.KubeConfigPath)
+			if err != nil {
+				return microerror.Mask(err)
+			}
+		} else if os.Getenv(kubeconfigEnvVar) != "" {
+			loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+			mergedConfig, err := loadingRules.Load()
+			if err != nil {
+				return microerror.Mask(err)
+			}
+
+			json, err := runtime.Encode(clientcmdlatest.Codec, mergedConfig)
+			if err != nil {
+				return microerror.Mask(err)
+			}
+
+			bytes, err := yaml.JSONToYAML(json)
+			if err != nil {
+				return microerror.Mask(err)
+			}
+
+			// Set kube config for passing to the apptest library.
+			kubeConfig = string(bytes)
+
+			restConfig, err = clientcmd.RESTConfigFromKubeConfig(bytes)
 			if err != nil {
 				return microerror.Mask(err)
 			}
@@ -122,7 +155,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	var appTest apptest.Interface
 	{
 		c := apptest.Config{
-			KubeConfig:     r.flag.KubeConfig,
+			KubeConfig:     kubeConfig,
 			KubeConfigPath: r.flag.KubeConfigPath,
 
 			Logger: r.logger,
