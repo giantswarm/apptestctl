@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/giantswarm/apiextensions/v3 v3.8.0
 	github.com/giantswarm/appcatalog v0.3.1
-	github.com/giantswarm/apptest v0.7.0
+	github.com/giantswarm/apptest v0.7.1
 	github.com/giantswarm/backoff v0.2.0
 	github.com/giantswarm/helmclient/v3 v3.0.1
 	github.com/giantswarm/k8sclient/v5 v5.0.0
@@ -17,6 +17,7 @@ require (
 	k8s.io/api v0.18.9
 	k8s.io/apimachinery v0.18.9
 	k8s.io/client-go v0.18.9
+	sigs.k8s.io/yaml v1.2.0
 )
 
 replace (
