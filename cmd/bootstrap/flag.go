@@ -3,9 +3,8 @@ package bootstrap
 import (
 	"os"
 
-	"github.com/spf13/cobra"
-
 	"github.com/giantswarm/microerror"
+	"github.com/spf13/cobra"
 )
 
 const (
