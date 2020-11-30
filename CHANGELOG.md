@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2020-11-30
+
 ### Added
 
 - Update apiextensions to v3.9.0 to add printer columns for app and chart CRDs.
@@ -70,7 +72,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add initial version that bootstraps app-operator, chart-operator and chartmuseum.
 
-[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/giantswarm/apptestctl/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/giantswarm/apptestctl/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/giantswarm/apptestctl/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/giantswarm/apptestctl/compare/v0.3.1...v0.4.0
