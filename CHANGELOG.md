@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Update apiextensions to v3.9.0 to add printer columns for app and chart CRDs.
+
 ## [0.5.0] - 2020-11-27
 
 ### Added
