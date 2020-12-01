@@ -8,6 +8,7 @@ serviceAccount:
   create: "true"
 env:
   open:
+    ALLOW_OVERWRITE: true
     DISABLE_API: false`
 
 	operatorValuesYAML string = `Installation:
