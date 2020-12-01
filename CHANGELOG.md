@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Chart-museum is now deployed with "allow-overwrite" option, so the same chart may be uploaded multiple times.
 
+### Fixed
+
+- "Version" in `version` command is printed correctly now
+
 ## [0.5.1] - 2020-11-30
 
 ### Added

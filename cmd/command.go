@@ -18,6 +18,7 @@ type Config struct {
 	Stderr io.Writer
 	Stdout io.Writer
 
+	Version    string
 	BinaryName string
 	GitCommit  string
 	Source     string
@@ -34,6 +35,9 @@ func New(config Config) (*cobra.Command, error) {
 		config.Stdout = os.Stdout
 	}
 
+	if config.Version == "" {
+		return nil, microerror.Maskf(invalidConfigError, "%T.Version must not be empty", config)
+	}
 	if config.GitCommit == "" {
 		return nil, microerror.Maskf(invalidConfigError, "%T.GitCommit must not be empty", config)
 	}
@@ -66,6 +70,7 @@ func New(config Config) (*cobra.Command, error) {
 
 			GitCommit: config.GitCommit,
 			Source:    config.Source,
+			Version:   config.Version,
 		}
 
 		versionCmd, err = version.New(c)

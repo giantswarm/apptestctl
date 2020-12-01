@@ -19,6 +19,7 @@ type runner struct {
 
 	gitCommit string
 	source    string
+	version   string
 }
 
 func (r *runner) Run(cmd *cobra.Command, args []string) error {
@@ -38,6 +39,7 @@ func (r *runner) Run(cmd *cobra.Command, args []string) error {
 }
 
 func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) error {
+	fmt.Fprintf(r.stdout, "Version:        %s\n", r.version)
 	fmt.Fprintf(r.stdout, "Git Commit:     %s\n", r.gitCommit)
 	fmt.Fprintf(r.stdout, "Go Version:     %s\n", runtime.Version())
 	fmt.Fprintf(r.stdout, "OS / Arch:      %s / %s\n", runtime.GOOS, runtime.GOARCH)
