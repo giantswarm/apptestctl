@@ -39,6 +39,7 @@ func mainE(ctx context.Context) error {
 
 			GitCommit: project.GitSHA(),
 			Source:    project.Source(),
+			Version:   project.Version(),
 		}
 
 		rootCommand, err = cmd.New(c)

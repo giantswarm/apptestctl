@@ -21,6 +21,7 @@ type Config struct {
 
 	GitCommit string
 	Source    string
+	Version   string
 }
 
 func New(config Config) (*cobra.Command, error) {
@@ -44,6 +45,7 @@ func New(config Config) (*cobra.Command, error) {
 
 		gitCommit: config.GitCommit,
 		source:    config.Source,
+		version:   config.Version,
 	}
 
 	c := &cobra.Command{
