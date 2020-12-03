@@ -568,11 +568,9 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installing %#q", name))
 
 		// Set control plane operator values so chart-operator DNS settings are
-		// correct. Merge with an empty set of values so YAML is parsed.
-		input := map[string][]byte{
-			"values": []byte(operatorValuesYAML),
-		}
-		values, err := helmclient.MergeValues(input, map[string][]byte{})
+		// correct.
+		var input map[string]interface{}
+		err := yaml.Unmarshal([]byte(operatorValuesYAML), &input)
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -587,7 +585,7 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 		err = helmClient.InstallReleaseFromTarball(ctx,
 			operatorTarballPath,
 			namespace,
-			values,
+			input,
 			opts)
 		if helmclient.IsCannotReuseRelease(err) {
 			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("%#q already installed", name))
