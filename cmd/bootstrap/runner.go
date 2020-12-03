@@ -570,6 +570,7 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 		// Set control plane operator values so chart-operator DNS settings are
 		// correct.
 		var input map[string]interface{}
+		
 		err := yaml.Unmarshal([]byte(operatorValuesYAML), &input)
 		if err != nil {
 			return microerror.Mask(err)
