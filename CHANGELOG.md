@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Remove helmclient.MergeValue functions usage.
+
 ## [0.5.2] - 2020-12-01
 
 ### Changed
