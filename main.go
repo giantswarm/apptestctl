@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/giantswarm/apptestctl/cmd"
-	"github.com/giantswarm/apptestctl/pkg/project"
 )
 
 func main() {
@@ -36,10 +35,6 @@ func mainE(ctx context.Context) error {
 	{
 		c := cmd.Config{
 			Logger: logger,
-
-			GitCommit: project.GitSHA(),
-			Source:    project.Source(),
-			Version:   project.Version(),
 		}
 
 		rootCommand, err = cmd.New(c)
