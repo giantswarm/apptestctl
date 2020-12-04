@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Pretty print errors.
+
 ### Changed
 
 - Remove helmclient.MergeValue functions usage.
@@ -54,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Use apiextensions v3 and include replace for Giant Swarm CAPI fork. 
+- Use apiextensions v3 and include replace for Giant Swarm CAPI fork.
 - Add replace for moby v20.10.0-beta1 to fix build issue on darwin.
 - Optimize apps wait interval as app-operator has a status webhook.
 - Use new catalog URL for Helm Stable.
