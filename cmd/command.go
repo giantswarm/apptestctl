@@ -17,11 +17,6 @@ type Config struct {
 	Logger micrologger.Logger
 	Stderr io.Writer
 	Stdout io.Writer
-
-	Version    string
-	BinaryName string
-	GitCommit  string
-	Source     string
 }
 
 func New(config Config) (*cobra.Command, error) {
@@ -33,16 +28,6 @@ func New(config Config) (*cobra.Command, error) {
 	}
 	if config.Stdout == nil {
 		config.Stdout = os.Stdout
-	}
-
-	if config.Version == "" {
-		return nil, microerror.Maskf(invalidConfigError, "%T.Version must not be empty", config)
-	}
-	if config.GitCommit == "" {
-		return nil, microerror.Maskf(invalidConfigError, "%T.GitCommit must not be empty", config)
-	}
-	if config.Source == "" {
-		return nil, microerror.Maskf(invalidConfigError, "%T.Source must not be empty", config)
 	}
 
 	var err error
@@ -67,10 +52,6 @@ func New(config Config) (*cobra.Command, error) {
 			Logger: config.Logger,
 			Stderr: config.Stderr,
 			Stdout: config.Stdout,
-
-			GitCommit: config.GitCommit,
-			Source:    config.Source,
-			Version:   config.Version,
 		}
 
 		versionCmd, err = version.New(c)
