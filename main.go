@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
@@ -15,7 +16,8 @@ import (
 func main() {
 	err := mainE(context.Background())
 	if err != nil {
-		panic(fmt.Sprintf("%#v\n", err))
+		fmt.Fprintf(os.Stderr, "Error: %s\n", microerror.Pretty(err, true))
+		os.Exit(2)
 	}
 }
 
@@ -47,6 +49,9 @@ func mainE(ctx context.Context) error {
 			return microerror.Mask(err)
 		}
 	}
+
+	rootCommand.SilenceErrors = true
+	rootCommand.SilenceUsage = true
 
 	err = rootCommand.Execute()
 	if err != nil {
