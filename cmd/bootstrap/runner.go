@@ -13,7 +13,7 @@ import (
 	"github.com/giantswarm/appcatalog"
 	"github.com/giantswarm/apptest"
 	"github.com/giantswarm/backoff"
-	"github.com/giantswarm/helmclient/v3/pkg/helmclient"
+	"github.com/giantswarm/helmclient/v4/pkg/helmclient"
 	"github.com/giantswarm/k8sclient/v5/pkg/k8sclient"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
@@ -143,8 +143,10 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	var helmClient helmclient.Interface
 	{
 		c := helmclient.Config{
-			K8sClient: k8sClients,
-			Logger:    r.logger,
+			K8sClient:  k8sClients.K8sClient(),
+			Logger:     r.logger,
+			RestClient: k8sClients.RESTClient(),
+			RestConfig: k8sClients.RESTConfig(),
 		}
 		helmClient, err = helmclient.New(c)
 		if err != nil {
