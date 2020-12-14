@@ -12,7 +12,7 @@ require (
 	github.com/giantswarm/microerror v0.3.0
 	github.com/giantswarm/micrologger v0.4.0
 	github.com/giantswarm/to v0.3.0
-	github.com/spf13/afero v1.4.1
+	github.com/spf13/afero v1.5.1
 	github.com/spf13/cobra v1.1.1
 	k8s.io/api v0.18.9
 	k8s.io/apimachinery v0.18.9
