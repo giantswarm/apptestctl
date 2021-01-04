@@ -4,7 +4,6 @@ package bootstrap
 
 import (
 	"context"
-	"fmt"
 	"testing"
 	"time"
 
@@ -23,7 +22,7 @@ func TestBootstrap(t *testing.T) {
 	ctx := context.Background()
 
 	{
-		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensuring %#q app CR is deployed", key.ChartMuseumAppName()))
+		config.Logger.Debugf(ctx, "ensuring %#q app CR is deployed", key.ChartMuseumAppName())
 
 		o := func() error {
 			app, err := config.K8sClients.G8sClient().ApplicationV1alpha1().Apps(key.Namespace()).Get(ctx, key.ChartMuseumAppName(), metav1.GetOptions{})
@@ -37,7 +36,7 @@ func TestBootstrap(t *testing.T) {
 		}
 
 		n := func(err error, t time.Duration) {
-			config.Logger.Log("level", "debug", "message", fmt.Sprintf("failed to get app CR status '%s': retrying in %s", helmclient.StatusDeployed, t), "stack", fmt.Sprintf("%v", err))
+			config.Logger.Errorf(ctx, err, "failed to get app CR status '%s': retrying in %s", helmclient.StatusDeployed, t)
 		}
 
 		b := backoff.NewConstant(20*time.Minute, 60*time.Second)
@@ -46,6 +45,6 @@ func TestBootstrap(t *testing.T) {
 			t.Fatalf("expected %#v got %#v", nil, err)
 		}
 
-		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensured %#q app CR is deployed", key.ChartMuseumAppName()))
+		config.Logger.Debugf(ctx, "ensured %#q app CR is deployed", key.ChartMuseumAppName())
 	}
 }

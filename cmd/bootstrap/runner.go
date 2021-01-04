@@ -221,14 +221,14 @@ func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface)
 
 	{
 		for _, crdName := range crds {
-			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensuring %#q CRD", crdName))
+			r.logger.Debugf(ctx, "ensuring %#q CRD", crdName)
 
 			err := k8sClients.CRDClient().EnsureCreated(ctx, crd.LoadV1("application.giantswarm.io", crdName), backoff.NewMaxRetries(7, 1*time.Second))
 			if err != nil {
 				return microerror.Mask(err)
 			}
 
-			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensured %#q CRD exists", crdName))
+			r.logger.Debugf(ctx, "ensured %#q CRD exists", crdName)
 		}
 	}
 
@@ -238,7 +238,7 @@ func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface)
 func (r *runner) ensureNamespace(ctx context.Context, k8sClients k8sclient.Interface) error {
 	namespace := "giantswarm"
 
-	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensuring namespace %#q", namespace))
+	r.logger.Debugf(ctx, "ensuring namespace %#q", namespace)
 
 	o := func() error {
 		{
@@ -249,7 +249,7 @@ func (r *runner) ensureNamespace(ctx context.Context, k8sClients k8sclient.Inter
 			}
 			_, err := k8sClients.K8sClient().CoreV1().Namespaces().Create(ctx, n, metav1.CreateOptions{})
 			if apierrors.IsAlreadyExists(err) {
-				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("namespace %#q already exists", namespace))
+				r.logger.Debugf(ctx, "namespace %#q already exists", namespace)
 				// fall through
 			} else if err != nil {
 				return microerror.Mask(err)
@@ -275,7 +275,7 @@ func (r *runner) ensureNamespace(ctx context.Context, k8sClients k8sclient.Inter
 		return microerror.Mask(err)
 	}
 
-	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensured namespace %#q", namespace))
+	r.logger.Debugf(ctx, "ensured namespace %#q", namespace)
 
 	return nil
 }
@@ -283,7 +283,7 @@ func (r *runner) ensureNamespace(ctx context.Context, k8sClients k8sclient.Inter
 func (r *runner) ensurePriorityClass(ctx context.Context, k8sClients k8sclient.Interface) error {
 	priorityClassName := "giantswarm-critical"
 
-	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating priorityclass %#q", priorityClassName))
+	r.logger.Debugf(ctx, "creating priorityclass %#q", priorityClassName)
 
 	pc := &schedulingv1.PriorityClass{
 		ObjectMeta: metav1.ObjectMeta{
@@ -296,12 +296,12 @@ func (r *runner) ensurePriorityClass(ctx context.Context, k8sClients k8sclient.I
 
 	_, err := k8sClients.K8sClient().SchedulingV1().PriorityClasses().Create(ctx, pc, metav1.CreateOptions{})
 	if apierrors.IsAlreadyExists(err) {
-		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("priorityclass %#q already exists", priorityClassName))
+		r.logger.Debugf(ctx, "priorityclass %#q already exists", priorityClassName)
 		// fall through
 	} else if err != nil {
 		return microerror.Mask(err)
 	} else {
-		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created priorityclass %#q", priorityClassName))
+		r.logger.Debugf(ctx, "created priorityclass %#q", priorityClassName)
 	}
 
 	return nil
@@ -315,7 +315,7 @@ func (r *runner) installAppCatalogs(ctx context.Context, k8sClients k8sclient.In
 	}
 
 	for name, url := range catalogs {
-		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating %#q appcatalog cr", name))
+		r.logger.Debugf(ctx, "creating %#q appcatalog cr", name)
 
 		appCatalogCR := &v1alpha1.AppCatalog{
 			ObjectMeta: metav1.ObjectMeta{
@@ -336,12 +336,12 @@ func (r *runner) installAppCatalogs(ctx context.Context, k8sClients k8sclient.In
 		}
 		_, err = k8sClients.G8sClient().ApplicationV1alpha1().AppCatalogs().Create(ctx, appCatalogCR, metav1.CreateOptions{})
 		if apierrors.IsAlreadyExists(err) {
-			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("%#q appcatalog CR already exists", appCatalogCR.Name))
+			r.logger.Debugf(ctx, "%#q appcatalog CR already exists", appCatalogCR.Name)
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
 
-		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created %#q appcatalog cr", name))
+		r.logger.Debugf(ctx, "created %#q appcatalog cr", name)
 	}
 
 	return nil
@@ -349,7 +349,7 @@ func (r *runner) installAppCatalogs(ctx context.Context, k8sClients k8sclient.In
 
 func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.Interface) error {
 	name := "chartmuseum-psp"
-	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensuring psp %#q", name))
+	r.logger.Debugf(ctx, "ensuring psp %#q", name)
 
 	o := func() error {
 		{
@@ -368,7 +368,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 			}
 			_, err := k8sClients.K8sClient().RbacV1().ClusterRoles().Create(ctx, clusterRole, metav1.CreateOptions{})
 			if apierrors.IsAlreadyExists(err) {
-				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("clusterRole %#q already exists", name))
+				r.logger.Debugf(ctx, "clusterRole %#q already exists", name)
 				// fall through
 			} else if err != nil {
 				return microerror.Mask(err)
@@ -394,7 +394,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 			}
 			_, err := k8sClients.K8sClient().RbacV1().ClusterRoleBindings().Create(ctx, clusterRoleBinding, metav1.CreateOptions{})
 			if apierrors.IsAlreadyExists(err) {
-				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("clusterRoleBinding %#q already exists", name))
+				r.logger.Debugf(ctx, "clusterRoleBinding %#q already exists", name)
 				// fall through
 			} else if err != nil {
 				return microerror.Mask(err)
@@ -426,7 +426,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 			}
 			_, err := k8sClients.K8sClient().PolicyV1beta1().PodSecurityPolicies().Create(ctx, psp, metav1.CreateOptions{})
 			if apierrors.IsAlreadyExists(err) {
-				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("psp %#q already exists", name))
+				r.logger.Debugf(ctx, "psp %#q already exists", name)
 				// fall through
 			} else if err != nil {
 				return microerror.Mask(err)
@@ -468,7 +468,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 			}
 			_, err := k8sClients.K8sClient().NetworkingV1().NetworkPolicies(namespace).Create(ctx, np, metav1.CreateOptions{})
 			if apierrors.IsAlreadyExists(err) {
-				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("networkpolicy %#q already exists", name))
+				r.logger.Debugf(ctx, "networkpolicy %#q already exists", name)
 				// fall through
 			} else if err != nil {
 				return microerror.Mask(err)
@@ -484,7 +484,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 		return microerror.Mask(err)
 	}
 
-	r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ensured psp %#q", name))
+	r.logger.Debugf(ctx, "ensured psp %#q", name)
 
 	return nil
 }
@@ -493,7 +493,7 @@ func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interfa
 	var err error
 
 	{
-		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating %#q app cr", chartMuseumName))
+		r.logger.Debugf(ctx, "creating %#q app cr", chartMuseumName)
 
 		apps := []apptest.App{
 			{
@@ -511,7 +511,7 @@ func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interfa
 			return microerror.Mask(err)
 		}
 
-		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created %#q app cr", chartMuseumName))
+		r.logger.Debugf(ctx, "created %#q app cr", chartMuseumName)
 	}
 
 	return nil
@@ -539,23 +539,23 @@ func (r *runner) installOperators(ctx context.Context, helmClient helmclient.Int
 func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Interface, name, version string) error {
 	var operatorTarballPath string
 	{
-		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("getting tarball URL for %#q", name))
+		r.logger.Debugf(ctx, "getting tarball URL for %#q", name)
 
 		operatorTarballURL, err := appcatalog.GetLatestChart(ctx, controlPlaneCatalogStorageURL, name, version)
 		if err != nil {
 			return microerror.Mask(err)
 		}
 
-		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("tarball URL is %#q", operatorTarballURL))
+		r.logger.Debugf(ctx, "tarball URL is %#q", operatorTarballURL)
 
-		r.logger.LogCtx(ctx, "level", "debug", "message", "pulling tarball")
+		r.logger.Debugf(ctx, "pulling tarball")
 
 		operatorTarballPath, err = helmClient.PullChartTarball(ctx, operatorTarballURL)
 		if err != nil {
 			return microerror.Mask(err)
 		}
 
-		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("tarball path is %#q", operatorTarballPath))
+		r.logger.Debugf(ctx, "tarball path is %#q", operatorTarballPath)
 	}
 
 	{
@@ -563,11 +563,11 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 			fs := afero.NewOsFs()
 			err := fs.Remove(operatorTarballPath)
 			if err != nil {
-				r.logger.LogCtx(ctx, "level", "error", "message", fmt.Sprintf("deletion of %#q failed", operatorTarballPath), "stack", fmt.Sprintf("%#v", err))
+				r.logger.Errorf(ctx, err, "deletion of %#q failed", operatorTarballPath)
 			}
 		}()
 
-		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installing %#q", name))
+		r.logger.Debugf(ctx, "installing %#q", name)
 
 		// Set control plane operator values so chart-operator DNS settings are
 		// correct.
@@ -591,16 +591,16 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 			input,
 			opts)
 		if helmclient.IsCannotReuseRelease(err) {
-			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("%#q already installed", name))
+			r.logger.Debugf(ctx, "%#q already installed", name)
 			return nil
 		} else if helmclient.IsReleaseAlreadyExists(err) {
-			r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("%#q already installed", name))
+			r.logger.Debugf(ctx, "%#q already installed", name)
 			return nil
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
 
-		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installed %#q", name))
+		r.logger.Debugf(ctx, "installed %#q", name)
 	}
 
 	return nil
