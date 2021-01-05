@@ -12,10 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Pretty print errors.
+- Update app-operator to v3.0.0.
 
 ### Changed
 
 - Remove helmclient.MergeValue functions usage.
+
+### Fixed
+
+- Use shorter resync period and reduce finalizer TTL in app-operator so
+resources are deleted on subsequent test runs. 
 
 ## [0.5.2] - 2020-12-01
 

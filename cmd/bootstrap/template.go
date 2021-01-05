@@ -11,7 +11,10 @@ env:
     ALLOW_OVERWRITE: true
     DISABLE_API: false`
 
-	operatorValuesYAML string = `Installation:
+	operatorValuesYAML string = `operatorkit:
+  resyncPeriod: "20s"
+
+Installation:
   V1:
     Helm:
       HTTP:
