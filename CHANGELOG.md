@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Wait for ready chartmuseum pod and configure readiness probe.
+
 ## [0.6.0] - 2021-01-07
 
 ### Added
