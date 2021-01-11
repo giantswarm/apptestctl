@@ -623,7 +623,7 @@ func (r *runner) waitForChartMuseum(ctx context.Context, appTest apptest.Interfa
 		if err != nil {
 			return microerror.Mask(err)
 		}
-		
+
 		if *deploy.Spec.Replicas != deploy.Status.ReadyReplicas {
 			return microerror.Maskf(executionFailedError, "waiting for %d ready pods, current %d", *deploy.Spec.Replicas, deploy.Status.ReadyReplicas)
 		}
