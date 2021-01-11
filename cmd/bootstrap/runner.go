@@ -207,6 +207,11 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		return microerror.Mask(err)
 	}
 
+	err = r.waitForChartMuseum(ctx, appTest)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
 	return nil
 }
 
@@ -602,6 +607,40 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 
 		r.logger.Debugf(ctx, "installed %#q", name)
 	}
+
+	return nil
+}
+
+func (r *runner) waitForChartMuseum(ctx context.Context, appTest apptest.Interface) error {
+	var err error
+
+	deployName := fmt.Sprintf("%s-%s", chartMuseumName, chartMuseumName)
+
+	r.logger.Debugf(ctx, "waiting for ready %#q deployment", deployName)
+
+	o := func() error {
+		deploy, err := appTest.K8sClient().AppsV1().Deployments(namespace).Get(ctx, deployName, metav1.GetOptions{})
+		if err != nil {
+			return microerror.Mask(err)
+		}
+		if *deploy.Spec.Replicas != deploy.Status.ReadyReplicas {
+			return microerror.Maskf(executionFailedError, "waiting for %d ready pods, current %d", *deploy.Spec.Replicas, deploy.Status.ReadyReplicas)
+		}
+
+		return nil
+	}
+
+	n := func(err error, t time.Duration) {
+		r.logger.Errorf(ctx, err, "failed to get ready deployment '%s': retrying in %s", deployName, t)
+	}
+
+	b := backoff.NewConstant(5*time.Minute, 10*time.Second)
+	err = backoff.RetryNotify(o, b, n)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	r.logger.Debugf(ctx, "waited for ready %#q deployment", deployName)
 
 	return nil
 }

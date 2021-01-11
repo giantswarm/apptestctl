@@ -9,7 +9,10 @@ serviceAccount:
 env:
   open:
     ALLOW_OVERWRITE: true
-    DISABLE_API: false`
+    DISABLE_API: false
+probes:
+  readiness:
+    initialDelaySeconds: 10`
 
 	operatorValuesYAML string = `operatorkit:
   resyncPeriod: "20s"
