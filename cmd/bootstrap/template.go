@@ -15,7 +15,7 @@ probes:
     initialDelaySeconds: 10`
 
 	operatorValuesYAML string = `operatorkit:
-  resyncPeriod: "20s"
+  resyncPeriod: "10s"
 
 Installation:
   V1:
