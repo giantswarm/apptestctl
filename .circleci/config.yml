@@ -11,7 +11,7 @@ workflows:
           name: go-build-apptestctl
           binary: apptestctl
           filters:
-            # Trigger job also on git tag.
+            # Trigger job also on git tag
             tags:
               only: /^v.*/
 
