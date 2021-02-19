@@ -1,6 +1,6 @@
 module github.com/giantswarm/apptestctl
 
-go 1.15
+go 1.16
 
 require (
 	github.com/giantswarm/apiextensions/v3 v3.18.1
@@ -21,6 +21,9 @@ require (
 )
 
 replace (
+	// Vulnerabilities in etcd
+	github.com/coreos/etcd v3.3.10+incompatible => github.com/coreos/etcd v3.3.25+incompatible
+	github.com/coreos/etcd v3.3.13+incompatible => github.com/coreos/etcd v3.3.25+incompatible
 	// Use moby v20.10.0-beta1 to fix build issue on darwin.
 	github.com/docker/docker => github.com/moby/moby v20.10.0-beta1+incompatible
 	// Use go-logr/logr v0.1.0 due to breaking changes in v0.2.0 that can't be applied.
