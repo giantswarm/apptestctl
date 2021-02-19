@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  architect: giantswarm/architect@dev:bump-go-to-1.16
+  architect: giantswarm/architect@2.0.0
 
 workflows:
   test:
@@ -11,7 +11,7 @@ workflows:
           name: go-build-apptestctl
           binary: apptestctl
           filters:
-            # Trigger job also on git tag
+            # Trigger job also on git tag.
             tags:
               only: /^v.*/
 
