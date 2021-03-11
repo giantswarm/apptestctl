@@ -3,12 +3,12 @@ module github.com/giantswarm/apptestctl
 go 1.16
 
 require (
-	github.com/giantswarm/apiextensions/v3 v3.18.1
+	github.com/giantswarm/apiextensions/v3 v3.19.0
 	github.com/giantswarm/appcatalog v0.4.0
 	github.com/giantswarm/apptest v0.10.2
 	github.com/giantswarm/backoff v0.2.0
 	github.com/giantswarm/helmclient/v4 v4.3.0
-	github.com/giantswarm/k8sclient/v5 v5.10.0
+	github.com/giantswarm/k8sclient/v5 v5.11.0
 	github.com/giantswarm/microerror v0.3.0
 	github.com/giantswarm/micrologger v0.5.0
 	github.com/giantswarm/to v0.3.0
