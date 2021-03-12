@@ -7,16 +7,16 @@ require (
 	github.com/giantswarm/appcatalog v0.4.1
 	github.com/giantswarm/apptest v0.10.3
 	github.com/giantswarm/backoff v0.2.0
-	github.com/giantswarm/helmclient/v4 v4.3.0
+	github.com/giantswarm/helmclient/v4 v4.4.0
 	github.com/giantswarm/k8sclient/v5 v5.11.0
 	github.com/giantswarm/microerror v0.3.0
 	github.com/giantswarm/micrologger v0.5.0
 	github.com/giantswarm/to v0.3.0
 	github.com/spf13/afero v1.5.1
 	github.com/spf13/cobra v1.1.3
-	k8s.io/api v0.19.4
-	k8s.io/apimachinery v0.19.4
-	k8s.io/client-go v0.19.4
+	k8s.io/api v0.20.2
+	k8s.io/apimachinery v0.20.2
+	k8s.io/client-go v0.20.2
 	sigs.k8s.io/yaml v1.2.0
 )
 
@@ -25,6 +25,7 @@ replace (
 	// Vulnerabilities in etcd
 	github.com/coreos/etcd v3.3.10+incompatible => github.com/coreos/etcd v3.3.25+incompatible
 	github.com/coreos/etcd v3.3.13+incompatible => github.com/coreos/etcd v3.3.25+incompatible
+	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
 	// Use moby v20.10.5 to fix build issue on darwin.
 	github.com/docker/docker => github.com/moby/moby v20.10.5+incompatible
 	// Use go-logr/logr v0.1.0 due to breaking changes in v0.2.0 that can't be applied.
