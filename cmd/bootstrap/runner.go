@@ -37,7 +37,7 @@ import (
 )
 
 const (
-	appOperatorVersion            = "4.0.0"
+	appOperatorVersion            = "4.0.2"
 	chartMuseumName               = "chartmuseum"
 	chartMuseumCatalogStorageURL  = "http://chartmuseum-chartmuseum:8080/charts/"
 	chartMuseumVersion            = "2.13.3"
