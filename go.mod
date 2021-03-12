@@ -4,8 +4,8 @@ go 1.16
 
 require (
 	github.com/giantswarm/apiextensions/v3 v3.19.0
-	github.com/giantswarm/appcatalog v0.4.0
-	github.com/giantswarm/apptest v0.10.2
+	github.com/giantswarm/appcatalog v0.4.1
+	github.com/giantswarm/apptest v0.10.3
 	github.com/giantswarm/backoff v0.2.0
 	github.com/giantswarm/helmclient/v4 v4.3.0
 	github.com/giantswarm/k8sclient/v5 v5.11.0
@@ -35,5 +35,5 @@ replace (
 	// Same as go-logr/logr, klog/v2 is using logr v0.2.0
 	k8s.io/klog/v2 v2.2.0 => k8s.io/klog/v2 v2.0.0
 	// Use fork of CAPI with Kubernetes 1.18 support.
-	sigs.k8s.io/cluster-api => github.com/giantswarm/cluster-api v0.3.10-gs
+	sigs.k8s.io/cluster-api => github.com/giantswarm/cluster-api v0.3.13-gs
 )
