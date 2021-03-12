@@ -25,5 +25,7 @@ Installation:
       Kubernetes:
         WaitTimeout: "180s"
     Registry:
-      Domain: "quay.io"`
+      Domain: "quay.io"
+    Provider:
+      Kind: aws`
 )

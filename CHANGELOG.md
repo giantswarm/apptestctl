@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update app-operator to v4.0.2.
+
 ## [0.7.0] - 2021-02-24
 
 ### Changed
