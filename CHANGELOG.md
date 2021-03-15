@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2021-03-15
+
 ### Changed
 
 - Update app-operator to v4.0.2.
@@ -115,7 +117,8 @@ resources are deleted on subsequent test runs.
 
 - Add initial version that bootstraps app-operator, chart-operator and chartmuseum.
 
-[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/giantswarm/apptestctl/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/giantswarm/apptestctl/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/giantswarm/apptestctl/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/giantswarm/apptestctl/compare/v0.5.2...v0.6.0
