@@ -7,12 +7,12 @@ require (
 	github.com/giantswarm/appcatalog v0.4.1
 	github.com/giantswarm/apptest v0.10.3
 	github.com/giantswarm/backoff v0.2.0
-	github.com/giantswarm/helmclient/v4 v4.4.0
+	github.com/giantswarm/helmclient/v4 v4.5.0
 	github.com/giantswarm/k8sclient/v5 v5.11.0
 	github.com/giantswarm/microerror v0.3.0
 	github.com/giantswarm/micrologger v0.5.0
 	github.com/giantswarm/to v0.3.0
-	github.com/spf13/afero v1.5.1
+	github.com/spf13/afero v1.6.0
 	github.com/spf13/cobra v1.1.3
 	k8s.io/api v0.20.2
 	k8s.io/apimachinery v0.20.2
