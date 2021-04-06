@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Update app-operator to v4.0.2.
+- Update app-operator to v4.3.2 for Kubernetes 1.20 support.
+- Update chart-operator to v2.13.1 for Kubernetes 1.20 support.
 
 ## [0.7.0] - 2021-02-24
 
