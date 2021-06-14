@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Ensuring `Catalog` CRD when bootstrapping the cluster.
+
 ## [0.8.0] - 2021-04-06
 
 ### Changed
