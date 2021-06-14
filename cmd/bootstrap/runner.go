@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/giantswarm/apiextensions/v3/pkg/apis/application/v1alpha1"
-	"github.com/giantswarm/apiextensions/v3/pkg/crd"
 	"github.com/giantswarm/apiextensions/v3/pkg/label"
+	crdpkg "github.com/giantswarm/app/v5/pkg/crd"
 	"github.com/giantswarm/appcatalog"
 	"github.com/giantswarm/apptest"
 	"github.com/giantswarm/backoff"
@@ -216,19 +216,38 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 }
 
 func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface) error {
+	var err error
 	// Ensure Application group CRDs are created.
 	crds := []string{
 		"AppCatalogEntry",
 		"AppCatalog",
 		"App",
+		"Catalog",
 		"Chart",
+	}
+
+	var crdGetter *crdpkg.CRDGetter
+	{
+		cc := crdpkg.Config{
+			Logger: r.logger,
+		}
+
+		crdGetter, err = crdpkg.NewCRDGetter(cc)
+		if err != nil {
+			return microerror.Mask(err)
+		}
 	}
 
 	{
 		for _, crdName := range crds {
 			r.logger.Debugf(ctx, "ensuring %#q CRD", crdName)
 
-			err := k8sClients.CRDClient().EnsureCreated(ctx, crd.LoadV1("application.giantswarm.io", crdName), backoff.NewMaxRetries(7, 1*time.Second))
+			crd, err := crdGetter.LoadCRD(ctx, "application.giantswarm.io", crdName)
+			if err != nil {
+				return microerror.Mask(err)
+			}
+
+			err = k8sClients.CRDClient().EnsureCreated(ctx, crd, backoff.NewMaxRetries(7, 1*time.Second))
 			if err != nil {
 				return microerror.Mask(err)
 			}
