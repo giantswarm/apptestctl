@@ -9,7 +9,7 @@ import (
 
 	"github.com/giantswarm/apiextensions/v3/pkg/apis/application/v1alpha1"
 	"github.com/giantswarm/apiextensions/v3/pkg/label"
-	crdpkg "github.com/giantswarm/app/v5/pkg/crd"
+	pkgcrd "github.com/giantswarm/app/v5/pkg/crd"
 	"github.com/giantswarm/appcatalog"
 	"github.com/giantswarm/apptest"
 	"github.com/giantswarm/backoff"
@@ -226,13 +226,13 @@ func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface)
 		"Chart",
 	}
 
-	var crdGetter *crdpkg.CRDGetter
+	var crdGetter *pkgcrd.CRDGetter
 	{
-		cc := crdpkg.Config{
+		cc := pkgcrd.Config{
 			Logger: r.logger,
 		}
 
-		crdGetter, err = crdpkg.NewCRDGetter(cc)
+		crdGetter, err = pkgcrd.NewCRDGetter(cc)
 		if err != nil {
 			return microerror.Mask(err)
 		}
