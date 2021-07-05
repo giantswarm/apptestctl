@@ -14,7 +14,7 @@ require (
 	github.com/giantswarm/micrologger v0.5.0
 	github.com/giantswarm/to v0.3.0
 	github.com/spf13/afero v1.6.0
-	github.com/spf13/cobra v1.1.3
+	github.com/spf13/cobra v1.2.1
 	k8s.io/api v0.20.4
 	k8s.io/apimachinery v0.20.4
 	k8s.io/client-go v0.20.4
