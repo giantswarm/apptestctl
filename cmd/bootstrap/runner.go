@@ -230,6 +230,8 @@ func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface)
 	{
 		cc := pkgcrd.Config{
 			Logger: r.logger,
+
+			GitHubToken: r.flag.GithubToken,
 		}
 
 		crdGetter, err = pkgcrd.NewCRDGetter(cc)
