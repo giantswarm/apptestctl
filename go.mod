@@ -3,7 +3,7 @@ module github.com/giantswarm/apptestctl
 go 1.16
 
 require (
-	github.com/giantswarm/apiextensions/v3 v3.27.1
+	github.com/giantswarm/apiextensions/v3 v3.30.0
 	github.com/giantswarm/app/v5 v5.0.1
 	github.com/giantswarm/appcatalog v0.5.0
 	github.com/giantswarm/apptest v0.11.0
@@ -23,7 +23,6 @@ require (
 
 replace (
 	github.com/containerd/containerd v1.3.4 => github.com/containerd/containerd v1.4.4
-	// Vulnerabilities in etcd
 	github.com/coreos/etcd v3.3.10+incompatible => github.com/coreos/etcd v3.3.25+incompatible
 	github.com/coreos/etcd v3.3.13+incompatible => github.com/coreos/etcd v3.3.25+incompatible
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
@@ -32,11 +31,11 @@ replace (
 	github.com/docker/docker => github.com/moby/moby v20.10.5+incompatible
 	// Use go-logr/logr v0.1.0 due to breaking changes in v0.2.0 that can't be applied.
 	github.com/go-logr/logr v0.2.0 => github.com/go-logr/logr v0.1.0
-	// Use v1.3.2 of gogo/protobuf to fix nancy alert.
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.11
 	github.com/opencontainers/runc v0.1.1 => github.com/opencontainers/runc v1.0.0-rc93
+	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.10
 	// Same as go-logr/logr, klog/v2 is using logr v0.2.0
 	k8s.io/klog/v2 v2.2.0 => k8s.io/klog/v2 v2.0.0
 	// Use fork of CAPI with Kubernetes 1.18 support.
