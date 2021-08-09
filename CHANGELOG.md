@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `--github-token` as a flag.
 
+### Changed
+
+- Update app-operator to v5.1.1.
+- Update chart-operator to v2.18.1.
+
 ## [0.9.0] - 2021-06-14
 
 ### Changed

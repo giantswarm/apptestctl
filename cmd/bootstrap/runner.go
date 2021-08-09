@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/giantswarm/apiextensions/v3/pkg/apis/application/v1alpha1"
-	"github.com/giantswarm/apiextensions/v3/pkg/label"
 	pkgcrd "github.com/giantswarm/app/v5/pkg/crd"
 	"github.com/giantswarm/appcatalog"
 	"github.com/giantswarm/apptest"
@@ -37,11 +36,11 @@ import (
 )
 
 const (
-	appOperatorVersion            = "4.3.2"
+	appOperatorVersion            = "5.1.1"
 	chartMuseumName               = "chartmuseum"
 	chartMuseumCatalogStorageURL  = "http://chartmuseum-chartmuseum:8080/charts/"
 	chartMuseumVersion            = "2.13.3"
-	chartOperatorVersion          = "2.13.1"
+	chartOperatorVersion          = "2.18.1"
 	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-catalog/"
 	helmStableCatalogName         = "helm-stable"
 	helmStableCatalogStorageURL   = "https://charts.helm.sh/stable/packages/"
@@ -192,7 +191,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		r.logger.LogCtx(ctx, "level", "debug", "message", "skipping installing operators")
 	}
 
-	err = r.installAppCatalogs(ctx, k8sClients)
+	err = r.installCatalogs(ctx, k8sClients)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -333,7 +332,7 @@ func (r *runner) ensurePriorityClass(ctx context.Context, k8sClients k8sclient.I
 	return nil
 }
 
-func (r *runner) installAppCatalogs(ctx context.Context, k8sClients k8sclient.Interface) error {
+func (r *runner) installCatalogs(ctx context.Context, k8sClients k8sclient.Interface) error {
 	var err error
 
 	catalogs := map[string]string{
@@ -341,33 +340,30 @@ func (r *runner) installAppCatalogs(ctx context.Context, k8sClients k8sclient.In
 	}
 
 	for name, url := range catalogs {
-		r.logger.Debugf(ctx, "creating %#q appcatalog cr", name)
+		r.logger.Debugf(ctx, "creating %#q catalog cr", name)
 
-		appCatalogCR := &v1alpha1.AppCatalog{
+		catalogCR := &v1alpha1.Catalog{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: name,
-				Labels: map[string]string{
-					// Processed by app-operator-unique.
-					label.AppOperatorVersion: "0.0.0",
-				},
+				Name:      name,
+				Namespace: metav1.NamespaceDefault,
 			},
-			Spec: v1alpha1.AppCatalogSpec{
+			Spec: v1alpha1.CatalogSpec{
 				Description: name,
 				Title:       name,
-				Storage: v1alpha1.AppCatalogSpecStorage{
+				Storage: v1alpha1.CatalogSpecStorage{
 					Type: "helm",
 					URL:  url,
 				},
 			},
 		}
-		_, err = k8sClients.G8sClient().ApplicationV1alpha1().AppCatalogs().Create(ctx, appCatalogCR, metav1.CreateOptions{})
+		_, err = k8sClients.G8sClient().ApplicationV1alpha1().Catalogs(catalogCR.Namespace).Create(ctx, catalogCR, metav1.CreateOptions{})
 		if apierrors.IsAlreadyExists(err) {
-			r.logger.Debugf(ctx, "%#q appcatalog CR already exists", appCatalogCR.Name)
+			r.logger.Debugf(ctx, "%#q catalog CR already exists", catalogCR.Name)
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
 
-		r.logger.Debugf(ctx, "created %#q appcatalog cr", name)
+		r.logger.Debugf(ctx, "created %#q catalog cr", name)
 	}
 
 	return nil
@@ -595,8 +591,6 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 
 		r.logger.Debugf(ctx, "installing %#q", name)
 
-		// Set control plane operator values so chart-operator DNS settings are
-		// correct.
 		var input map[string]interface{}
 
 		err := yaml.Unmarshal([]byte(operatorValuesYAML), &input)
@@ -605,11 +599,7 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 		}
 
 		opts := helmclient.InstallOptions{
-			// ReleaseName has unique suffix like in the control plane so the test
-			// app CRs need to use 0.0.0 for the version label.
-			ReleaseName: fmt.Sprintf("%s-unique", name),
-			// Wait ensures that the status webhook is ready.
-			Wait: true,
+			ReleaseName: name,
 		}
 		err = helmClient.InstallReleaseFromTarball(ctx,
 			operatorTarballPath,
