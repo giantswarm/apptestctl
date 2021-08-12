@@ -35,6 +35,7 @@ import (
 const (
 	appOperatorName               = "app-operator"
 	appOperatorVersion            = "5.1.1"
+	appPlatformName               = "app-platform"
 	chartMuseumName               = "chartmuseum"
 	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-catalog/"
 	namespace                     = "giantswarm"
@@ -361,11 +362,11 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 func (r *runner) installAppPlatform(ctx context.Context, helmClient helmclient.Interface) error {
 	var err error
 
-	name := "app-platform"
+	// TODO Fetch from catalog.
 	tarballPath := "app-platform-0.1.0.tgz"
 
 	{
-		r.logger.Debugf(ctx, "installing %#q", name)
+		r.logger.Debugf(ctx, "installing %#q", appPlatformName)
 
 		var input map[string]interface{}
 
@@ -378,16 +379,16 @@ func (r *runner) installAppPlatform(ctx context.Context, helmClient helmclient.I
 			input,
 			opts)
 		if helmclient.IsCannotReuseRelease(err) {
-			r.logger.Debugf(ctx, "%#q already installed", name)
+			r.logger.Debugf(ctx, "%#q already installed", appPlatformName)
 			return nil
 		} else if helmclient.IsReleaseAlreadyExists(err) {
-			r.logger.Debugf(ctx, "%#q already installed", name)
+			r.logger.Debugf(ctx, "%#q already installed", appPlatformName)
 			return nil
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
 
-		r.logger.Debugf(ctx, "installed %#q", name)
+		r.logger.Debugf(ctx, "installed %#q", appPlatformName)
 	}
 
 	return nil
