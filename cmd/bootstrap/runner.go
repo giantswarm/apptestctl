@@ -161,7 +161,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		return microerror.Mask(err)
 	}
 
-	err = r.installOperator(ctx, helmClient, "app-operator", appOperatorVersion)
+	err = r.installAppOperator(ctx, helmClient)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -396,12 +396,12 @@ func (r *runner) installAppPlatform(ctx context.Context, helmClient helmclient.I
 	return nil
 }
 
-func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Interface, name, version string) error {
+func (r *runner) installAppOperator(ctx context.Context, helmClient helmclient.Interface) error {
 	var operatorTarballPath string
 	{
-		r.logger.Debugf(ctx, "getting tarball URL for %#q", name)
+		r.logger.Debugf(ctx, "getting tarball URL for %#q", appOperatorName)
 
-		operatorTarballURL, err := appcatalog.GetLatestChart(ctx, controlPlaneCatalogStorageURL, name, version)
+		operatorTarballURL, err := appcatalog.GetLatestChart(ctx, controlPlaneCatalogStorageURL, appOperatorName, appOperatorVersion)
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -431,7 +431,7 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 
 		var input map[string]interface{}
 
-		err := yaml.Unmarshal([]byte(operatorValuesYAML), &input)
+		err := yaml.Unmarshal([]byte(appOperatorValuesYAML), &input)
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -445,16 +445,16 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 			input,
 			opts)
 		if helmclient.IsCannotReuseRelease(err) {
-			r.logger.Debugf(ctx, "%#q already installed", name)
+			r.logger.Debugf(ctx, "%#q already installed", appOperatorName)
 			return nil
 		} else if helmclient.IsReleaseAlreadyExists(err) {
-			r.logger.Debugf(ctx, "%#q already installed", name)
+			r.logger.Debugf(ctx, "%#q already installed", appOperatorName)
 			return nil
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
 
-		r.logger.Debugf(ctx, "installed %#q", name)
+		r.logger.Debugf(ctx, "installed %#q", appOperatorName)
 	}
 
 	return nil
