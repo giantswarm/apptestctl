@@ -434,7 +434,7 @@ func (r *runner) installAppOperator(ctx context.Context, helmClient helmclient.I
 		}
 
 		opts := helmclient.InstallOptions{
-			ReleaseName: name,
+			ReleaseName: appOperatorName,
 		}
 		err = helmClient.InstallReleaseFromTarball(ctx,
 			operatorTarballPath,
