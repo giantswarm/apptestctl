@@ -107,9 +107,6 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 				return microerror.Mask(err)
 			}
 
-			// Set kube config for passing to the apptest library.
-			kubeConfig = string(bytes)
-
 			restConfig, err = clientcmd.RESTConfigFromKubeConfig(bytes)
 			if err != nil {
 				return microerror.Mask(err)
