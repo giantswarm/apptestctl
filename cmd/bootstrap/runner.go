@@ -7,10 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/giantswarm/apiextensions/v3/pkg/apis/application/v1alpha1"
-	pkgcrd "github.com/giantswarm/app/v5/pkg/crd"
 	"github.com/giantswarm/appcatalog"
-	"github.com/giantswarm/apptest"
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/helmclient/v4/pkg/helmclient"
 	"github.com/giantswarm/k8sclient/v5/pkg/k8sclient"
@@ -24,11 +21,11 @@ import (
 	networkingv1 "k8s.io/api/networking/v1"
 	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	rbacv1 "k8s.io/api/rbac/v1"
-	schedulingv1 "k8s.io/api/scheduling/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdlatest "k8s.io/client-go/tools/clientcmd/api/latest"
@@ -36,14 +33,10 @@ import (
 )
 
 const (
+	appOperatorName               = "app-operator"
 	appOperatorVersion            = "5.1.1"
 	chartMuseumName               = "chartmuseum"
-	chartMuseumCatalogStorageURL  = "http://chartmuseum-chartmuseum:8080/charts/"
-	chartMuseumVersion            = "2.13.3"
-	chartOperatorVersion          = "2.18.1"
 	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-catalog/"
-	helmStableCatalogName         = "helm-stable"
-	helmStableCatalogStorageURL   = "https://charts.helm.sh/stable/packages/"
 	namespace                     = "giantswarm"
 )
 
@@ -153,45 +146,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		}
 	}
 
-	var appTest apptest.Interface
-	{
-		c := apptest.Config{
-			KubeConfig:     kubeConfig,
-			KubeConfigPath: r.flag.KubeConfigPath,
-
-			Logger: r.logger,
-		}
-		appTest, err = apptest.New(c)
-		if err != nil {
-			return microerror.Mask(err)
-		}
-	}
-
-	err = r.ensureCRDs(ctx, k8sClients)
-	if err != nil {
-		return microerror.Mask(err)
-	}
-
-	err = r.ensurePriorityClass(ctx, k8sClients)
-	if err != nil {
-		return microerror.Mask(err)
-	}
-
 	err = r.ensureNamespace(ctx, k8sClients)
-	if err != nil {
-		return microerror.Mask(err)
-	}
-
-	if r.flag.InstallOperators {
-		err = r.installOperators(ctx, helmClient, k8sClients)
-		if err != nil {
-			return microerror.Mask(err)
-		}
-	} else {
-		r.logger.LogCtx(ctx, "level", "debug", "message", "skipping installing operators")
-	}
-
-	err = r.installCatalogs(ctx, k8sClients)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -201,60 +156,19 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		return microerror.Mask(err)
 	}
 
-	err = r.installChartMuseum(ctx, appTest)
+	err = r.installAppPlatform(ctx, helmClient)
 	if err != nil {
 		return microerror.Mask(err)
 	}
 
-	err = r.waitForChartMuseum(ctx, appTest)
+	err = r.installOperator(ctx, helmClient, "app-operator", appOperatorVersion)
 	if err != nil {
 		return microerror.Mask(err)
 	}
 
-	return nil
-}
-
-func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface) error {
-	var err error
-	// Ensure Application group CRDs are created.
-	crds := []string{
-		"AppCatalogEntry",
-		"AppCatalog",
-		"App",
-		"Catalog",
-		"Chart",
-	}
-
-	var crdGetter *pkgcrd.CRDGetter
-	{
-		cc := pkgcrd.Config{
-			Logger: r.logger,
-
-			GitHubToken: r.flag.GithubToken,
-		}
-
-		crdGetter, err = pkgcrd.NewCRDGetter(cc)
-		if err != nil {
-			return microerror.Mask(err)
-		}
-	}
-
-	{
-		for _, crdName := range crds {
-			r.logger.Debugf(ctx, "ensuring %#q CRD", crdName)
-
-			crd, err := crdGetter.LoadCRD(ctx, "application.giantswarm.io", crdName)
-			if err != nil {
-				return microerror.Mask(err)
-			}
-
-			err = k8sClients.CRDClient().EnsureCreated(ctx, crd, backoff.NewMaxRetries(7, 1*time.Second))
-			if err != nil {
-				return microerror.Mask(err)
-			}
-
-			r.logger.Debugf(ctx, "ensured %#q CRD exists", crdName)
-		}
+	err = r.waitForChartMuseum(ctx, k8sClients.K8sClient())
+	if err != nil {
+		return microerror.Mask(err)
 	}
 
 	return nil
@@ -301,70 +215,6 @@ func (r *runner) ensureNamespace(ctx context.Context, k8sClients k8sclient.Inter
 	}
 
 	r.logger.Debugf(ctx, "ensured namespace %#q", namespace)
-
-	return nil
-}
-
-func (r *runner) ensurePriorityClass(ctx context.Context, k8sClients k8sclient.Interface) error {
-	priorityClassName := "giantswarm-critical"
-
-	r.logger.Debugf(ctx, "creating priorityclass %#q", priorityClassName)
-
-	pc := &schedulingv1.PriorityClass{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: priorityClassName,
-		},
-		Value:         1000000000,
-		GlobalDefault: false,
-		Description:   "This priority class is used by giantswarm kubernetes components.",
-	}
-
-	_, err := k8sClients.K8sClient().SchedulingV1().PriorityClasses().Create(ctx, pc, metav1.CreateOptions{})
-	if apierrors.IsAlreadyExists(err) {
-		r.logger.Debugf(ctx, "priorityclass %#q already exists", priorityClassName)
-		// fall through
-	} else if err != nil {
-		return microerror.Mask(err)
-	} else {
-		r.logger.Debugf(ctx, "created priorityclass %#q", priorityClassName)
-	}
-
-	return nil
-}
-
-func (r *runner) installCatalogs(ctx context.Context, k8sClients k8sclient.Interface) error {
-	var err error
-
-	catalogs := map[string]string{
-		chartMuseumName: chartMuseumCatalogStorageURL,
-	}
-
-	for name, url := range catalogs {
-		r.logger.Debugf(ctx, "creating %#q catalog cr", name)
-
-		catalogCR := &v1alpha1.Catalog{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      name,
-				Namespace: metav1.NamespaceDefault,
-			},
-			Spec: v1alpha1.CatalogSpec{
-				Description: name,
-				Title:       name,
-				Storage: v1alpha1.CatalogSpecStorage{
-					Type: "helm",
-					URL:  url,
-				},
-			},
-		}
-		_, err = k8sClients.G8sClient().ApplicationV1alpha1().Catalogs(catalogCR.Namespace).Create(ctx, catalogCR, metav1.CreateOptions{})
-		if apierrors.IsAlreadyExists(err) {
-			r.logger.Debugf(ctx, "%#q catalog CR already exists", catalogCR.Name)
-		} else if err != nil {
-			return microerror.Mask(err)
-		}
-
-		r.logger.Debugf(ctx, "created %#q catalog cr", name)
-	}
 
 	return nil
 }
@@ -511,48 +361,36 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 	return nil
 }
 
-func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interface) error {
+func (r *runner) installAppPlatform(ctx context.Context, helmClient helmclient.Interface) error {
 	var err error
+
+	name := "app-platform"
+	tarballPath := "app-platform-0.1.0.tgz"
 
 	{
-		r.logger.Debugf(ctx, "creating %#q app cr", chartMuseumName)
+		r.logger.Debugf(ctx, "installing %#q", name)
 
-		apps := []apptest.App{
-			{
-				CatalogName:   helmStableCatalogName,
-				CatalogURL:    helmStableCatalogStorageURL,
-				Name:          chartMuseumName,
-				Namespace:     namespace,
-				ValuesYAML:    chartMuseumValuesYAML,
-				Version:       chartMuseumVersion,
-				WaitForDeploy: r.flag.Wait,
-			},
+		var input map[string]interface{}
+
+		opts := helmclient.InstallOptions{
+			ReleaseName: name,
 		}
-		err = appTest.InstallApps(ctx, apps)
-		if err != nil {
+		err = helmClient.InstallReleaseFromTarball(ctx,
+			tarballPath,
+			namespace,
+			input,
+			opts)
+		if helmclient.IsCannotReuseRelease(err) {
+			r.logger.Debugf(ctx, "%#q already installed", name)
+			return nil
+		} else if helmclient.IsReleaseAlreadyExists(err) {
+			r.logger.Debugf(ctx, "%#q already installed", name)
+			return nil
+		} else if err != nil {
 			return microerror.Mask(err)
 		}
 
-		r.logger.Debugf(ctx, "created %#q app cr", chartMuseumName)
-	}
-
-	return nil
-}
-
-func (r *runner) installOperators(ctx context.Context, helmClient helmclient.Interface, k8sClients k8sclient.Interface) error {
-	var err error
-
-	operators := map[string]string{
-		"app-operator":   appOperatorVersion,
-		"chart-operator": chartOperatorVersion,
-	}
-
-	for name, version := range operators {
-		err = r.installOperator(ctx, helmClient, name, version)
-		if err != nil {
-			return microerror.Mask(err)
-		}
-
+		r.logger.Debugf(ctx, "installed %#q", name)
 	}
 
 	return nil
@@ -622,7 +460,7 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 	return nil
 }
 
-func (r *runner) waitForChartMuseum(ctx context.Context, appTest apptest.Interface) error {
+func (r *runner) waitForChartMuseum(ctx context.Context, k8sClient kubernetes.Interface) error {
 	var err error
 
 	deployName := fmt.Sprintf("%s-%s", chartMuseumName, chartMuseumName)
@@ -630,7 +468,7 @@ func (r *runner) waitForChartMuseum(ctx context.Context, appTest apptest.Interfa
 	r.logger.Debugf(ctx, "waiting for ready %#q deployment", deployName)
 
 	o := func() error {
-		deploy, err := appTest.K8sClient().AppsV1().Deployments(namespace).Get(ctx, deployName, metav1.GetOptions{})
+		deploy, err := k8sClient.AppsV1().Deployments(namespace).Get(ctx, deployName, metav1.GetOptions{})
 		if err != nil {
 			return microerror.Mask(err)
 		}
