@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/giantswarm/appcatalog"
-	"github.com/giantswarm/apptestctl/pkg/project"
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/helmclient/v4/pkg/helmclient"
 	"github.com/giantswarm/k8sclient/v5/pkg/k8sclient"
@@ -31,6 +30,8 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdlatest "k8s.io/client-go/tools/clientcmd/api/latest"
 	"sigs.k8s.io/yaml"
+
+	"github.com/giantswarm/apptestctl/pkg/project"
 )
 
 const (
