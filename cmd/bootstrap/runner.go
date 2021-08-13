@@ -38,7 +38,7 @@ const (
 	appOperatorName    = "app-operator"
 	appOperatorVersion = "5.1.1-260404d1d7df9e58a7daa3c1b22ee574d13a7c8f"
 	// TODO Fix name
-	appPlatformName               = "apptestlctl"
+	appPlatformName               = "apptestctl"
 	chartMuseumName               = "chartmuseum"
 	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-test-catalog/"
 	namespace                     = "giantswarm"
