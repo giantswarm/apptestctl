@@ -1,0 +1,18 @@
+apiVersion: application.giantswarm.io/v1alpha1
+kind: App
+metadata:
+  labels:
+    app-operator.giantswarm.io/version: 0.0.0
+  name: chart-operator
+  namespace: giantswarm
+spec:
+  catalog: control-plane-catalog
+  config:
+    configMap:
+      name: chart-operator-values
+      namespace: giantswarm
+  kubeConfig:
+    inCluster: true
+  name: chart-operator
+  namespace: giantswarm
+  version: {{ .Values.chartOperator.version }}

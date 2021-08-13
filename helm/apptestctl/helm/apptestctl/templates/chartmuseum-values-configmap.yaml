@@ -1,0 +1,19 @@
+apiVersion: v1
+data:
+  configmap-values.yaml: |
+    persistence:
+      enabled: "true"
+    serviceAccount:
+      name: "chartmuseum"
+      create: "true"
+    env:
+      open:
+        ALLOW_OVERWRITE: true
+        DISABLE_API: false
+    probes:
+      readiness:
+        initialDelaySeconds: 10
+kind: ConfigMap
+metadata:
+  name: chartmuseum-values
+  namespace: giantswarm

@@ -1,0 +1,16 @@
+apiVersion: application.giantswarm.io/v1alpha1
+kind: Catalog
+metadata:
+  labels:
+    application.giantswarm.io/catalog-type: stable
+    application.giantswarm.io/catalog-visibility: internal
+  name: control-plane-test-catalog
+  namespace: default
+spec:
+  description: 'This catalog holds Apps exclusively running on Giant Swarm control
+    planes. '
+  logoURL: /images/repo_icons/giantswarm.png
+  storage:
+    URL: https://giantswarm.github.io/control-plane-test-catalog/
+    type: helm
+  title: Control Plane Test Catalog

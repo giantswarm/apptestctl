@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  configmap-values.yaml: |
+    clusterDNSIP: "10.96.0.10"
+    operatorkit:
+      resyncPeriod: "20s"
+kind: ConfigMap
+metadata:
+  name: chart-operator-values
+  namespace: giantswarm

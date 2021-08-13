@@ -15,6 +15,20 @@ workflows:
             tags:
               only: /^v.*/
 
+      - architect/push-to-app-catalog:
+          context: "architect"
+          name: push-apptestctl-to-control-plane-test-catalog
+          app_catalog: "control-plane-test-catalog"
+          app_catalog_test: "control-plane-test-catalog"
+          chart: "apptestctl"
+          filters:
+            # Do not trigger the job on merge to master.
+            branches:
+              ignore:
+                - master
+          requires:
+            - go-build-apptestctl
+
       - architect/push-to-docker:
           context: architect
           name: push-apptestctl-to-quay

@@ -1,0 +1,15 @@
+apiVersion: application.giantswarm.io/v1alpha1
+kind: Catalog
+metadata:
+  labels:
+    application.giantswarm.io/catalog-type: testing
+    application.giantswarm.io/catalog-visibility: internal
+  name: chartmuseum
+  namespace: default
+spec:
+  description: 'This catalog is for the in-cluster chartmuseum.'
+  logoURL: /images/repo_icons/giantswarm.png
+  storage:
+    URL: http://chartmuseum-chartmuseum:8080/charts/
+    type: helm
+  title: chartmuseum

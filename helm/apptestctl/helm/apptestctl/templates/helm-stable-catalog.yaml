@@ -1,0 +1,16 @@
+apiVersion: application.giantswarm.io/v1alpha1
+kind: Catalog
+metadata:
+  labels:
+    application.giantswarm.io/catalog-type: community
+    application.giantswarm.io/catalog-visibility: public
+  name: helm-stable
+  namespace: default
+spec:
+  description: 'This is the Helm Stable chart repository that you can find here: https://github.com/helm/charts/tree/master/stable
+    This App Catalog does not have any guarantees or SLA. '
+  logoURL: /images/repo_icons/community.png
+  storage:
+    URL: https://charts.helm.sh/stable/packages/
+    type: helm
+  title: Helm Stable

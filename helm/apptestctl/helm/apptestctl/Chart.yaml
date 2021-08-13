@@ -1,0 +1,5 @@
+apiVersion: v2
+name: apptestctl
+description: Used by apptestctl to install the Giant Swarm App Platform
+home: https://github.com/giantswarm/apptestctl
+version: [[ .Version ]]

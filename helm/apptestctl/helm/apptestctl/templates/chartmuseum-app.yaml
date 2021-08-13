@@ -1,0 +1,18 @@
+apiVersion: application.giantswarm.io/v1alpha1
+kind: App
+metadata:
+  labels:
+    app-operator.giantswarm.io/version: 0.0.0
+  name: chartmuseum
+  namespace: giantswarm
+spec:
+  catalog: helm-stable
+  config:
+    configMap:
+      name: chartmuseum-values
+      namespace: giantswarm
+  kubeConfig:
+    inCluster: true
+  name: chartmuseum
+  namespace: giantswarm
+  version: {{ .Values.chartMuseum.version }}

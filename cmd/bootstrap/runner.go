@@ -33,11 +33,13 @@ import (
 )
 
 const (
-	appOperatorName               = "app-operator"
-	appOperatorVersion            = "5.1.1"
-	appPlatformName               = "app-platform"
+	appOperatorName    = "app-operator"
+	appOperatorVersion = "5.1.1-260404d1d7df9e58a7daa3c1b22ee574d13a7c8f"
+	// TODO Fix name
+	appPlatformName               = "apptestlctl"
+	appPlatformVersion            = "0.1.0"
 	chartMuseumName               = "chartmuseum"
-	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-catalog/"
+	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-test-catalog/"
 	namespace                     = "giantswarm"
 )
 
@@ -360,46 +362,29 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 }
 
 func (r *runner) installAppPlatform(ctx context.Context, helmClient helmclient.Interface) error {
-	var err error
-
-	// TODO Fetch from catalog.
-	tarballPath := "app-platform-0.1.0.tgz"
-
-	{
-		r.logger.Debugf(ctx, "installing %#q", appPlatformName)
-
-		var input map[string]interface{}
-
-		opts := helmclient.InstallOptions{
-			ReleaseName: name,
-		}
-		err = helmClient.InstallReleaseFromTarball(ctx,
-			tarballPath,
-			namespace,
-			input,
-			opts)
-		if helmclient.IsCannotReuseRelease(err) {
-			r.logger.Debugf(ctx, "%#q already installed", appPlatformName)
-			return nil
-		} else if helmclient.IsReleaseAlreadyExists(err) {
-			r.logger.Debugf(ctx, "%#q already installed", appPlatformName)
-			return nil
-		} else if err != nil {
-			return microerror.Mask(err)
-		}
-
-		r.logger.Debugf(ctx, "installed %#q", appPlatformName)
+	err := r.installHelmRelease(ctx, helmClient, appPlatformName, appPlatformVersion)
+	if err != nil {
+		return microerror.Mask(err)
 	}
 
 	return nil
 }
 
 func (r *runner) installAppOperator(ctx context.Context, helmClient helmclient.Interface) error {
+	err := r.installHelmRelease(ctx, helmClient, appOperatorName, appOperatorVersion)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	return nil
+}
+
+func (r *runner) installHelmRelease(ctx context.Context, helmClient helmclient.Interface, name, version string) error {
 	var operatorTarballPath string
 	{
-		r.logger.Debugf(ctx, "getting tarball URL for %#q", appOperatorName)
+		r.logger.Debugf(ctx, "getting tarball URL for %#q", name)
 
-		operatorTarballURL, err := appcatalog.GetLatestChart(ctx, controlPlaneCatalogStorageURL, appOperatorName, appOperatorVersion)
+		operatorTarballURL, err := appcatalog.GetLatestChart(ctx, controlPlaneCatalogStorageURL, name, version)
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -435,7 +420,7 @@ func (r *runner) installAppOperator(ctx context.Context, helmClient helmclient.I
 		}
 
 		opts := helmclient.InstallOptions{
-			ReleaseName: appOperatorName,
+			ReleaseName: name,
 		}
 		err = helmClient.InstallReleaseFromTarball(ctx,
 			operatorTarballPath,
@@ -443,16 +428,16 @@ func (r *runner) installAppOperator(ctx context.Context, helmClient helmclient.I
 			input,
 			opts)
 		if helmclient.IsCannotReuseRelease(err) {
-			r.logger.Debugf(ctx, "%#q already installed", appOperatorName)
+			r.logger.Debugf(ctx, "%#q already installed", name)
 			return nil
 		} else if helmclient.IsReleaseAlreadyExists(err) {
-			r.logger.Debugf(ctx, "%#q already installed", appOperatorName)
+			r.logger.Debugf(ctx, "%#q already installed", name)
 			return nil
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
 
-		r.logger.Debugf(ctx, "installed %#q", appOperatorName)
+		r.logger.Debugf(ctx, "installed %#q", name)
 	}
 
 	return nil
