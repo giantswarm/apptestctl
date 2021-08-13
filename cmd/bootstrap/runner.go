@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/giantswarm/appcatalog"
+	"github.com/giantswarm/apptestctl/pkg/project"
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/helmclient/v4/pkg/helmclient"
 	"github.com/giantswarm/k8sclient/v5/pkg/k8sclient"
@@ -37,7 +38,6 @@ const (
 	appOperatorVersion = "5.1.1-260404d1d7df9e58a7daa3c1b22ee574d13a7c8f"
 	// TODO Fix name
 	appPlatformName               = "apptestlctl"
-	appPlatformVersion            = "0.1.0"
 	chartMuseumName               = "chartmuseum"
 	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-test-catalog/"
 	namespace                     = "giantswarm"
@@ -362,7 +362,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 }
 
 func (r *runner) installAppPlatform(ctx context.Context, helmClient helmclient.Interface) error {
-	err := r.installHelmRelease(ctx, helmClient, appPlatformName, appPlatformVersion)
+	err := r.installHelmRelease(ctx, helmClient, appPlatformName, project.Version(), "")
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -371,7 +371,7 @@ func (r *runner) installAppPlatform(ctx context.Context, helmClient helmclient.I
 }
 
 func (r *runner) installAppOperator(ctx context.Context, helmClient helmclient.Interface) error {
-	err := r.installHelmRelease(ctx, helmClient, appOperatorName, appOperatorVersion)
+	err := r.installHelmRelease(ctx, helmClient, appOperatorName, appOperatorVersion, appOperatorValuesYAML)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -379,7 +379,7 @@ func (r *runner) installAppOperator(ctx context.Context, helmClient helmclient.I
 	return nil
 }
 
-func (r *runner) installHelmRelease(ctx context.Context, helmClient helmclient.Interface, name, version string) error {
+func (r *runner) installHelmRelease(ctx context.Context, helmClient helmclient.Interface, name, version, valuesYAML string) error {
 	var operatorTarballPath string
 	{
 		r.logger.Debugf(ctx, "getting tarball URL for %#q", name)
@@ -414,7 +414,7 @@ func (r *runner) installHelmRelease(ctx context.Context, helmClient helmclient.I
 
 		var input map[string]interface{}
 
-		err := yaml.Unmarshal([]byte(appOperatorValuesYAML), &input)
+		err := yaml.Unmarshal([]byte(valuesYAML), &input)
 		if err != nil {
 			return microerror.Mask(err)
 		}
