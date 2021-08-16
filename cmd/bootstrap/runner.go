@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	pkgcrd "github.com/giantswarm/app/v5/pkg/crd"
 	"github.com/giantswarm/appcatalog"
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/helmclient/v4/pkg/helmclient"
@@ -30,8 +31,6 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdlatest "k8s.io/client-go/tools/clientcmd/api/latest"
 	"sigs.k8s.io/yaml"
-
-	"github.com/giantswarm/apptestctl/pkg/project"
 )
 
 const (
@@ -152,6 +151,11 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		return microerror.Mask(err)
 	}
 
+	err = r.ensureCRDs(ctx, k8sClients)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
 	err = r.ensureChartMuseumPSP(ctx, k8sClients)
 	if err != nil {
 		return microerror.Mask(err)
@@ -170,6 +174,52 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	err = r.waitForChartMuseum(ctx, k8sClients.K8sClient())
 	if err != nil {
 		return microerror.Mask(err)
+	}
+
+	return nil
+}
+
+func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface) error {
+	var err error
+	// Ensure Application group CRDs are created.
+	crds := []string{
+		"AppCatalogEntry",
+		"AppCatalog",
+		"App",
+		"Catalog",
+		"Chart",
+	}
+
+	var crdGetter *pkgcrd.CRDGetter
+	{
+		cc := pkgcrd.Config{
+			Logger: r.logger,
+
+			GitHubToken: r.flag.GithubToken,
+		}
+
+		crdGetter, err = pkgcrd.NewCRDGetter(cc)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+	}
+
+	{
+		r.logger.Debugf(ctx, "ensuring CRDs")
+
+		for _, crdName := range crds {
+			crd, err := crdGetter.LoadCRD(ctx, "application.giantswarm.io", crdName)
+			if err != nil {
+				return microerror.Mask(err)
+			}
+
+			err = k8sClients.CRDClient().EnsureCreated(ctx, crd, backoff.NewMaxRetries(7, 1*time.Second))
+			if err != nil {
+				return microerror.Mask(err)
+			}
+		}
+
+		r.logger.Debugf(ctx, "ensured CRDs")
 	}
 
 	return nil
@@ -363,7 +413,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 }
 
 func (r *runner) installAppPlatform(ctx context.Context, helmClient helmclient.Interface) error {
-	err := r.installHelmRelease(ctx, helmClient, appPlatformName, project.Version(), "")
+	err := r.installHelmRelease(ctx, helmClient, appPlatformName, "0.10.0-20e020d4e15b7c34110677e22434502b603fcdac", "")
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -422,6 +472,7 @@ func (r *runner) installHelmRelease(ctx context.Context, helmClient helmclient.I
 
 		opts := helmclient.InstallOptions{
 			ReleaseName: name,
+			SkipCRDs:    true,
 		}
 		err = helmClient.InstallReleaseFromTarball(ctx,
 			operatorTarballPath,

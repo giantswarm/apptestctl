@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/giantswarm/apiextensions/v3 v3.32.0 // indirect
+	github.com/giantswarm/app/v5 v5.1.0
 	github.com/giantswarm/appcatalog v0.6.0
 	github.com/giantswarm/backoff v0.2.0
 	github.com/giantswarm/helmclient/v4 v4.8.0
@@ -11,7 +12,6 @@ require (
 	github.com/giantswarm/microerror v0.3.0
 	github.com/giantswarm/micrologger v0.5.0
 	github.com/giantswarm/to v0.3.0
-	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/spf13/afero v1.6.0
 	github.com/spf13/cobra v1.2.1
 	k8s.io/api v0.20.10
