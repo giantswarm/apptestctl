@@ -6,7 +6,7 @@ metadata:
   name: app-operator
   namespace: giantswarm
 spec:
-  catalog: control-plane-catalog
+  catalog: control-plane-test-catalog
   config:
     configMap:
       name: app-operator-values
