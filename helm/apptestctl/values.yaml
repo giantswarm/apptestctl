@@ -1,5 +1,5 @@
 appOperator:
-  version: "5.1.1-260404d1d7df9e58a7daa3c1b22ee574d13a7c8f"
+  version: 5.2.0
 
 chartMuseum:
   version: 2.13.3

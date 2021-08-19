@@ -37,7 +37,7 @@ import (
 
 const (
 	appOperatorName               = "app-operator"
-	appOperatorVersion            = "5.1.1-260404d1d7df9e58a7daa3c1b22ee574d13a7c8f"
+	appOperatorVersion            = "5.2.0"
 	chartMuseumName               = "chartmuseum"
 	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-test-catalog/"
 	namespace                     = "giantswarm"
@@ -413,7 +413,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 }
 
 func (r *runner) installAppPlatform(ctx context.Context, helmClient helmclient.Interface) error {
-	err := r.installHelmRelease(ctx, helmClient, project.Name(), project.Version(), "")
+	err := r.installHelmRelease(ctx, helmClient, project.Name(), project.GitSHA(), "")
 	if err != nil {
 		return microerror.Mask(err)
 	}
