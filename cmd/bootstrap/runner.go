@@ -31,13 +31,13 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdlatest "k8s.io/client-go/tools/clientcmd/api/latest"
 	"sigs.k8s.io/yaml"
+
+	"github.com/giantswarm/apptestctl/pkg/project"
 )
 
 const (
-	appOperatorName    = "app-operator"
-	appOperatorVersion = "5.1.1-260404d1d7df9e58a7daa3c1b22ee574d13a7c8f"
-	// TODO Fix name
-	appPlatformName               = "apptestctl"
+	appOperatorName               = "app-operator"
+	appOperatorVersion            = "5.1.1-260404d1d7df9e58a7daa3c1b22ee574d13a7c8f"
 	chartMuseumName               = "chartmuseum"
 	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-test-catalog/"
 	namespace                     = "giantswarm"
@@ -413,7 +413,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 }
 
 func (r *runner) installAppPlatform(ctx context.Context, helmClient helmclient.Interface) error {
-	err := r.installHelmRelease(ctx, helmClient, appPlatformName, "0.10.0-20e020d4e15b7c34110677e22434502b603fcdac", "")
+	err := r.installHelmRelease(ctx, helmClient, project.Name(), project.Version(), "")
 	if err != nil {
 		return microerror.Mask(err)
 	}
