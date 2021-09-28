@@ -14,7 +14,10 @@ probes:
   readiness:
     initialDelaySeconds: 10`
 
-	operatorValuesYAML string = `operatorkit:
+	// Set isManagementCluster to true so we ClusterFirst for chart-operator
+	// DNS settings.
+	operatorValuesYAML string = `isManagementCluster: "true"
+operatorkit:
   resyncPeriod: "20s"
 
 provider:
