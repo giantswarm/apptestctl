@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Set `isManagementCluster` to true so we `ClusterFirst` for chart-operator
+DNS settings.
+
 ## [0.11.0] - 2021-09-28
 
 ### Changed
