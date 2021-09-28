@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update app-operator to v5.2.0.
+- Update chart-operator to v2.19.0.
+
 ## [0.10.0] - 2021-08-09
 
 ### Added
