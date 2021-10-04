@@ -14,7 +14,7 @@ the trick. Alternatively the following one-liner may help.
 GO111MODULE=on go install -ldflags "-X 'github.com/giantswarm/apptestctl/pkg/project.gitSHA=$(git rev-parse HEAD)'" .
 ```
 
-# Usage
+## Usage
 
 After creating a [kind](https://kind.sigs.k8s.io/) cluster on your local machine, type below command. 
 
@@ -23,9 +23,22 @@ apptestctl bootstrap --kubeconfig="$(kind get kubeconfig)"
 
 {"caller":"github.com/giantswarm/k8sclient/v5/pkg/k8srestconfig/rest_config.go:137","level":"debug","message":"creating REST config from kubeconfig","time":"2020-09-29T11:09:41.587218+00:00"}
 {"caller":"github.com/giantswarm/k8sclient/v5/pkg/k8srestconfig/rest_config.go:145","level":"debug","message":"created REST config from kubeconfig","time":"2020-09-29T11:09:41.588999+00:00"}
-{"caller":"github.com/giantswarm/apptestctl/cmd/bootstrap/runner.go:148","level":"debug","message":"ensuring `AppCatalog` CRD","time":"2020-09-29T11:09:41.651762+00:00"}
-{"caller":"github.com/giantswarm/k8sclient/v5/pkg/k8scrdclient/crd_client.go:89","level":"debug","message":"creating CRD `appcatalogs.application.giantswarm.io`","time":"2020-09-29T11:09:41.726147+00:00"}
 ...
 ```
 
 It will automatically create all resources such as app-operator, chart-operator and CRDs for app testing.
+
+## Update CRDs
+
+The bootstrap command installs CRDs in the group `application.giantswarm.io`.
+These are embedded in `pkg/crds` to avoid hitting GitHub API rate limits.
+
+The CRD manifests can be updated with this snippet.
+
+```sh
+crds=( appcatalogentries appcatalogs apps catalogs charts )
+
+for crd in "${crds[@]}"; do
+        curl -s "https://raw.githubusercontent.com/giantswarm/apiextensions/master/config/crd/application.giantswarm.io_${crd}.yaml" > "pkg/crds/${crd}.yaml"
+done
+```

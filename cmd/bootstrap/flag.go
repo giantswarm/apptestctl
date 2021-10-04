@@ -8,7 +8,6 @@ import (
 )
 
 const (
-	githubToken      = "github-token"
 	installOperators = "install-operators"
 	kubeconfig       = "kubeconfig"
 	kubeconfigEnvVar = "KUBECONFIG"
@@ -17,7 +16,6 @@ const (
 )
 
 type flag struct {
-	GithubToken      string
 	InstallOperators bool
 	KubeConfig       string
 	KubeConfigPath   string
@@ -25,7 +23,6 @@ type flag struct {
 }
 
 func (f *flag) Init(cmd *cobra.Command) {
-	cmd.Flags().StringVarP(&f.GithubToken, githubToken, "g", "", "Github Token for fetching CRDs")
 	cmd.Flags().BoolVarP(&f.InstallOperators, installOperators, "o", true, "Install app-operator and chart-operator")
 	cmd.Flags().StringVarP(&f.KubeConfig, kubeconfig, "k", "", "Explicit kubeconfig for the target cluster")
 	cmd.Flags().StringVarP(&f.KubeConfigPath, kubeconfigPath, "p", "", "Path to a kubeconfig file for the target cluster")
