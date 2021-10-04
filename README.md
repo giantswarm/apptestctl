@@ -33,12 +33,9 @@ It will automatically create all resources such as app-operator, chart-operator 
 The bootstrap command installs CRDs in the group `application.giantswarm.io`.
 These are embedded in `pkg/crds` to avoid hitting GitHub API rate limits.
 
-The CRD manifests can be updated with this snippet.
+The CRD manifests can be synced with [apiextensions](https://github.com/giantswarm/apiextensions)
+using the Makefile.
 
 ```sh
-crds=( appcatalogentries appcatalogs apps catalogs charts )
-
-for crd in "${crds[@]}"; do
-        curl -s "https://raw.githubusercontent.com/giantswarm/apiextensions/master/config/crd/application.giantswarm.io_${crd}.yaml" > "pkg/crds/${crd}.yaml"
-done
+make sync-crds
 ```
