@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/giantswarm/apiextensions/v3/pkg/apis/application/v1alpha1"
-	pkgcrd "github.com/giantswarm/app/v5/pkg/crd"
 	"github.com/giantswarm/appcatalog"
 	"github.com/giantswarm/apptest"
 	"github.com/giantswarm/backoff"
@@ -25,6 +24,7 @@ import (
 	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	schedulingv1 "k8s.io/api/scheduling/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -33,6 +33,8 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdlatest "k8s.io/client-go/tools/clientcmd/api/latest"
 	"sigs.k8s.io/yaml"
+
+	"github.com/giantswarm/apptestctl/pkg/crds"
 )
 
 const (
@@ -216,44 +218,24 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 
 func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface) error {
 	var err error
-	// Ensure Application group CRDs are created.
-	crds := []string{
-		"AppCatalogEntry",
-		"AppCatalog",
-		"App",
-		"Catalog",
-		"Chart",
-	}
-
-	var crdGetter *pkgcrd.CRDGetter
-	{
-		cc := pkgcrd.Config{
-			Logger: r.logger,
-
-			GitHubToken: r.flag.GithubToken,
-		}
-
-		crdGetter, err = pkgcrd.NewCRDGetter(cc)
-		if err != nil {
-			return microerror.Mask(err)
-		}
-	}
 
 	{
-		for _, crdName := range crds {
-			r.logger.Debugf(ctx, "ensuring %#q CRD", crdName)
+		for _, crdYAML := range crds.CRDs() {
+			r.logger.Debugf(ctx, "ensuring CRDs")
 
-			crd, err := crdGetter.LoadCRD(ctx, "application.giantswarm.io", crdName)
+			var crd apiextensionsv1.CustomResourceDefinition
+
+			err = yaml.Unmarshal([]byte(crdYAML), &crd)
 			if err != nil {
 				return microerror.Mask(err)
 			}
 
-			err = k8sClients.CRDClient().EnsureCreated(ctx, crd, backoff.NewMaxRetries(7, 1*time.Second))
+			err = k8sClients.CRDClient().EnsureCreated(ctx, &crd, backoff.NewMaxRetries(7, 1*time.Second))
 			if err != nil {
 				return microerror.Mask(err)
 			}
 
-			r.logger.Debugf(ctx, "ensured %#q CRD exists", crdName)
+			r.logger.Debugf(ctx, "ensured CRDs")
 		}
 	}
 

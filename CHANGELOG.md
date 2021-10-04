@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Embed `application.giantswarm.io` CRDs to avoid hitting GitHub API rate limits.
+
 ## [0.11.1] - 2021-09-28
 
 ### Fixed

@@ -4,7 +4,6 @@ go 1.16
 
 require (
 	github.com/giantswarm/apiextensions/v3 v3.32.0
-	github.com/giantswarm/app/v5 v5.2.3
 	github.com/giantswarm/appcatalog v0.6.0
 	github.com/giantswarm/apptest v0.12.0
 	github.com/giantswarm/backoff v0.2.0
@@ -16,6 +15,7 @@ require (
 	github.com/spf13/afero v1.6.0
 	github.com/spf13/cobra v1.2.1
 	k8s.io/api v0.20.10
+	k8s.io/apiextensions-apiserver v0.20.10
 	k8s.io/apimachinery v0.20.10
 	k8s.io/client-go v0.20.10
 	sigs.k8s.io/yaml v1.2.0
