@@ -14,11 +14,11 @@ require (
 	github.com/giantswarm/to v0.3.0
 	github.com/spf13/afero v1.6.0
 	github.com/spf13/cobra v1.2.1
-	k8s.io/api v0.20.10
-	k8s.io/apiextensions-apiserver v0.20.10
-	k8s.io/apimachinery v0.20.10
-	k8s.io/client-go v0.20.10
-	sigs.k8s.io/yaml v1.2.0
+	k8s.io/api v0.20.11
+	k8s.io/apiextensions-apiserver v0.20.11
+	k8s.io/apimachinery v0.20.11
+	k8s.io/client-go v0.20.11
+	sigs.k8s.io/yaml v1.3.0
 )
 
 replace (
@@ -28,7 +28,7 @@ replace (
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
 	// Use moby v20.10.5 to fix build issue on darwin.
-	github.com/docker/docker => github.com/moby/moby v20.10.5+incompatible
+	github.com/docker/docker => github.com/moby/moby v20.10.9+incompatible
 	// Use go-logr/logr v0.1.0 due to breaking changes in v0.2.0 that can't be applied.
 	github.com/go-logr/logr v0.2.0 => github.com/go-logr/logr v0.1.0
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
