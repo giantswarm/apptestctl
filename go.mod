@@ -14,10 +14,10 @@ require (
 	github.com/giantswarm/to v0.3.0
 	github.com/spf13/afero v1.6.0
 	github.com/spf13/cobra v1.2.1
-	k8s.io/api v0.20.11
-	k8s.io/apiextensions-apiserver v0.20.11
-	k8s.io/apimachinery v0.20.11
-	k8s.io/client-go v0.20.11
+	k8s.io/api v0.20.12
+	k8s.io/apiextensions-apiserver v0.20.12
+	k8s.io/apimachinery v0.20.12
+	k8s.io/client-go v0.20.12
 	sigs.k8s.io/yaml v1.3.0
 )
 
