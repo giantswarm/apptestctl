@@ -12,6 +12,7 @@ const (
 	kubeconfig       = "kubeconfig"
 	kubeconfigEnvVar = "KUBECONFIG"
 	kubeconfigPath   = "kubeconfig-path"
+	verbose          = "verbose"
 	wait             = "wait"
 )
 
@@ -19,6 +20,7 @@ type flag struct {
 	InstallOperators bool
 	KubeConfig       string
 	KubeConfigPath   string
+	Verbose          bool
 	Wait             bool
 }
 
@@ -26,6 +28,7 @@ func (f *flag) Init(cmd *cobra.Command) {
 	cmd.Flags().BoolVarP(&f.InstallOperators, installOperators, "o", true, "Install app-operator and chart-operator")
 	cmd.Flags().StringVarP(&f.KubeConfig, kubeconfig, "k", "", "Explicit kubeconfig for the target cluster")
 	cmd.Flags().StringVarP(&f.KubeConfigPath, kubeconfigPath, "p", "", "Path to a kubeconfig file for the target cluster")
+	cmd.Flags().BoolVarP(&f.Verbose, verbose, "v", false, "Enable verbose logging")
 	cmd.Flags().BoolVarP(&f.Wait, wait, "w", true, "Wait for all components to be ready")
 }
 
