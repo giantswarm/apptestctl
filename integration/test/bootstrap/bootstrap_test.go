@@ -12,6 +12,7 @@ import (
 	"github.com/giantswarm/helmclient/v4/pkg/helmclient"
 	"github.com/giantswarm/microerror"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 
 	"github.com/giantswarm/apptestctl/integration/key"
 )
@@ -26,7 +27,10 @@ func TestBootstrap(t *testing.T) {
 		config.Logger.Debugf(ctx, "ensuring %#q app CR is deployed", key.ChartMuseumAppName())
 
 		o := func() error {
-			app, err := config.K8sClients.G8sClient().ApplicationV1alpha1().Apps(key.Namespace()).Get(ctx, key.ChartMuseumAppName(), metav1.GetOptions{})
+			app := &v1alpha1.App{}
+			app, err := config.K8sClients.CtrlClient().Get(ctx,
+				types.NamespacedName{Namespace: key.Namespace(),
+					Name: key.ChartMuseumAppName()}, app)
 			if err != nil {
 				return microerror.Mask(err)
 			}

@@ -338,7 +338,7 @@ func (r *runner) installCatalogs(ctx context.Context, k8sClients k8sclient.Inter
 				},
 			},
 		}
-		_, err = k8sClients.G8sClient().ApplicationV1alpha1().Catalogs(catalogCR.Namespace).Create(ctx, catalogCR, metav1.CreateOptions{})
+		err = k8sClients.CtrlClient().Create(ctx, catalogCR)
 		if apierrors.IsAlreadyExists(err) {
 			r.log(ctx, "%#q catalog CR already exists", catalogCR.Name)
 		} else if err != nil {
