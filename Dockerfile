@@ -1,4 +1,4 @@
-FROM quay.io/giantswarm/alpine:3.14.2-giantswarm
+FROM quay.io/giantswarm/alpine:3.14.3-giantswarm
 
 USER giantswarm
 COPY ./apptestctl /usr/local/bin/apptestctl
