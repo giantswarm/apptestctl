@@ -160,6 +160,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		c := apptest.Config{
 			KubeConfig:     kubeConfig,
 			KubeConfigPath: r.flag.KubeConfigPath,
+			Verbose:        r.flag.Verbose,
 
 			Logger: r.logger,
 		}
@@ -168,6 +169,8 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 			return microerror.Mask(err)
 		}
 	}
+
+	fmt.Fprintln(r.stdout, "installing app platform components")
 
 	err = r.ensureCRDs(ctx, k8sClients)
 	if err != nil {
@@ -190,7 +193,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 			return microerror.Mask(err)
 		}
 	} else {
-		r.logger.LogCtx(ctx, "level", "debug", "message", "skipping installing operators")
+		fmt.Fprintln(r.stdout, "skipping installing operators")
 	}
 
 	err = r.installCatalogs(ctx, k8sClients)
@@ -212,6 +215,8 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	if err != nil {
 		return microerror.Mask(err)
 	}
+
+	fmt.Fprintln(r.stdout, "app platform components are ready")
 
 	return nil
 }
@@ -245,7 +250,7 @@ func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface)
 func (r *runner) ensureNamespace(ctx context.Context, k8sClients k8sclient.Interface) error {
 	namespace := "giantswarm"
 
-	r.log(ctx, "ensuring namespace %#q", namespace)
+	r.log(ctx, "ensuring namespace '%s'", namespace)
 
 	o := func() error {
 		{
@@ -256,7 +261,7 @@ func (r *runner) ensureNamespace(ctx context.Context, k8sClients k8sclient.Inter
 			}
 			_, err := k8sClients.K8sClient().CoreV1().Namespaces().Create(ctx, n, metav1.CreateOptions{})
 			if apierrors.IsAlreadyExists(err) {
-				r.log(ctx, "namespace %#q already exists", namespace)
+				r.log(ctx, "namespace '%s' already exists", namespace)
 				// fall through
 			} else if err != nil {
 				return microerror.Mask(err)
@@ -269,7 +274,7 @@ func (r *runner) ensureNamespace(ctx context.Context, k8sClients k8sclient.Inter
 				return microerror.Mask(err)
 			}
 			if n.Status.Phase != v1.NamespaceActive {
-				return microerror.Maskf(executionFailedError, fmt.Sprintf("namespace in status %#q", n.Status.Phase))
+				return microerror.Maskf(executionFailedError, fmt.Sprintf("namespace in status '%s'", n.Status.Phase))
 			}
 		}
 
@@ -282,7 +287,7 @@ func (r *runner) ensureNamespace(ctx context.Context, k8sClients k8sclient.Inter
 		return microerror.Mask(err)
 	}
 
-	r.log(ctx, "ensured namespace %#q", namespace)
+	r.log(ctx, "ensured namespace '%s'", namespace)
 
 	return nil
 }
@@ -290,7 +295,7 @@ func (r *runner) ensureNamespace(ctx context.Context, k8sClients k8sclient.Inter
 func (r *runner) ensurePriorityClass(ctx context.Context, k8sClients k8sclient.Interface) error {
 	priorityClassName := "giantswarm-critical"
 
-	r.log(ctx, "creating priorityclass %#q", priorityClassName)
+	r.log(ctx, "creating priorityclass '%s'", priorityClassName)
 
 	pc := &schedulingv1.PriorityClass{
 		ObjectMeta: metav1.ObjectMeta{
@@ -303,12 +308,12 @@ func (r *runner) ensurePriorityClass(ctx context.Context, k8sClients k8sclient.I
 
 	_, err := k8sClients.K8sClient().SchedulingV1().PriorityClasses().Create(ctx, pc, metav1.CreateOptions{})
 	if apierrors.IsAlreadyExists(err) {
-		r.log(ctx, "priorityclass %#q already exists", priorityClassName)
+		r.log(ctx, "priorityclass '%s' already exists", priorityClassName)
 		// fall through
 	} else if err != nil {
 		return microerror.Mask(err)
 	} else {
-		r.log(ctx, "created priorityclass %#q", priorityClassName)
+		r.log(ctx, "created priorityclass '%s'", priorityClassName)
 	}
 
 	return nil
@@ -322,7 +327,7 @@ func (r *runner) installCatalogs(ctx context.Context, k8sClients k8sclient.Inter
 	}
 
 	for name, url := range catalogs {
-		r.log(ctx, "creating %#q catalog cr", name)
+		r.log(ctx, "creating '%s' catalog cr", name)
 
 		catalogCR := &v1alpha1.Catalog{
 			ObjectMeta: metav1.ObjectMeta{
@@ -340,12 +345,12 @@ func (r *runner) installCatalogs(ctx context.Context, k8sClients k8sclient.Inter
 		}
 		err = k8sClients.CtrlClient().Create(ctx, catalogCR)
 		if apierrors.IsAlreadyExists(err) {
-			r.log(ctx, "%#q catalog CR already exists", catalogCR.Name)
+			r.log(ctx, "'%s' catalog CR already exists", catalogCR.Name)
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
 
-		r.log(ctx, "created %#q catalog cr", name)
+		r.log(ctx, "created '%s' catalog cr", name)
 	}
 
 	return nil
@@ -353,7 +358,7 @@ func (r *runner) installCatalogs(ctx context.Context, k8sClients k8sclient.Inter
 
 func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.Interface) error {
 	name := "chartmuseum-psp"
-	r.log(ctx, "ensuring psp %#q", name)
+	r.log(ctx, "ensuring psp '%s'", name)
 
 	o := func() error {
 		{
@@ -372,7 +377,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 			}
 			_, err := k8sClients.K8sClient().RbacV1().ClusterRoles().Create(ctx, clusterRole, metav1.CreateOptions{})
 			if apierrors.IsAlreadyExists(err) {
-				r.log(ctx, "clusterRole %#q already exists", name)
+				r.log(ctx, "clusterRole '%s' already exists", name)
 				// fall through
 			} else if err != nil {
 				return microerror.Mask(err)
@@ -398,7 +403,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 			}
 			_, err := k8sClients.K8sClient().RbacV1().ClusterRoleBindings().Create(ctx, clusterRoleBinding, metav1.CreateOptions{})
 			if apierrors.IsAlreadyExists(err) {
-				r.log(ctx, "clusterRoleBinding %#q already exists", name)
+				r.log(ctx, "clusterRoleBinding '%s' already exists", name)
 				// fall through
 			} else if err != nil {
 				return microerror.Mask(err)
@@ -430,7 +435,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 			}
 			_, err := k8sClients.K8sClient().PolicyV1beta1().PodSecurityPolicies().Create(ctx, psp, metav1.CreateOptions{})
 			if apierrors.IsAlreadyExists(err) {
-				r.log(ctx, "psp %#q already exists", name)
+				r.log(ctx, "psp '%s' already exists", name)
 				// fall through
 			} else if err != nil {
 				return microerror.Mask(err)
@@ -472,7 +477,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 			}
 			_, err := k8sClients.K8sClient().NetworkingV1().NetworkPolicies(namespace).Create(ctx, np, metav1.CreateOptions{})
 			if apierrors.IsAlreadyExists(err) {
-				r.log(ctx, "networkpolicy %#q already exists", name)
+				r.log(ctx, "networkpolicy '%s' already exists", name)
 				// fall through
 			} else if err != nil {
 				return microerror.Mask(err)
@@ -488,7 +493,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 		return microerror.Mask(err)
 	}
 
-	r.log(ctx, "ensured psp %#q", name)
+	r.log(ctx, "ensured psp '%s'", name)
 
 	return nil
 }
@@ -497,7 +502,7 @@ func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interfa
 	var err error
 
 	{
-		r.log(ctx, "creating %#q app cr", chartMuseumName)
+		r.log(ctx, "creating '%s' app cr", chartMuseumName)
 
 		apps := []apptest.App{
 			{
@@ -515,7 +520,7 @@ func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interfa
 			return microerror.Mask(err)
 		}
 
-		r.log(ctx, "created %#q app cr", chartMuseumName)
+		r.log(ctx, "created '%s' app cr", chartMuseumName)
 	}
 
 	return nil
@@ -543,14 +548,14 @@ func (r *runner) installOperators(ctx context.Context, helmClient helmclient.Int
 func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Interface, name, version string) error {
 	var operatorTarballPath string
 	{
-		r.log(ctx, "getting tarball URL for %#q", name)
+		r.log(ctx, "getting tarball URL for '%s'", name)
 
 		operatorTarballURL, err := appcatalog.GetLatestChart(ctx, controlPlaneCatalogStorageURL, name, version)
 		if err != nil {
 			return microerror.Mask(err)
 		}
 
-		r.log(ctx, "tarball URL is %#q", operatorTarballURL)
+		r.log(ctx, "tarball URL is '%s'", operatorTarballURL)
 
 		r.log(ctx, "pulling tarball")
 
@@ -559,7 +564,7 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 			return microerror.Mask(err)
 		}
 
-		r.log(ctx, "tarball path is %#q", operatorTarballPath)
+		r.log(ctx, "tarball path is '%s'", operatorTarballPath)
 	}
 
 	{
@@ -567,11 +572,11 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 			fs := afero.NewOsFs()
 			err := fs.Remove(operatorTarballPath)
 			if err != nil {
-				r.logger.Errorf(ctx, err, "deletion of %#q failed", operatorTarballPath)
+				r.logger.Errorf(ctx, err, "deletion of '%s' failed", operatorTarballPath)
 			}
 		}()
 
-		r.log(ctx, "installing %#q", name)
+		r.log(ctx, "installing '%s'", name)
 
 		var input map[string]interface{}
 
@@ -589,16 +594,16 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 			input,
 			opts)
 		if helmclient.IsCannotReuseRelease(err) {
-			r.log(ctx, "%#q already installed", name)
+			r.log(ctx, "'%s' already installed", name)
 			return nil
 		} else if helmclient.IsReleaseAlreadyExists(err) {
-			r.log(ctx, "%#q already installed", name)
+			r.log(ctx, "'%s' already installed", name)
 			return nil
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
 
-		r.log(ctx, "installed %#q", name)
+		r.log(ctx, "installed '%s'", name)
 	}
 
 	return nil
@@ -609,7 +614,7 @@ func (r *runner) waitForChartMuseum(ctx context.Context, appTest apptest.Interfa
 
 	deployName := fmt.Sprintf("%s-%s", chartMuseumName, chartMuseumName)
 
-	r.log(ctx, "waiting for ready %#q deployment", deployName)
+	r.log(ctx, "waiting for ready '%s' deployment", deployName)
 
 	o := func() error {
 		deploy, err := appTest.K8sClient().AppsV1().Deployments(namespace).Get(ctx, deployName, metav1.GetOptions{})
@@ -634,7 +639,7 @@ func (r *runner) waitForChartMuseum(ctx context.Context, appTest apptest.Interfa
 		return microerror.Mask(err)
 	}
 
-	r.log(ctx, "waited for ready %#q deployment", deployName)
+	r.log(ctx, "waited for ready '%s' deployment", deployName)
 
 	return nil
 }
