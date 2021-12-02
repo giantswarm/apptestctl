@@ -3,21 +3,21 @@ module github.com/giantswarm/apptestctl
 go 1.16
 
 require (
-	github.com/giantswarm/apiextensions/v3 v3.38.0
+	github.com/giantswarm/apiextensions-application v0.1.0
 	github.com/giantswarm/appcatalog v0.6.0
-	github.com/giantswarm/apptest v0.12.0
+	github.com/giantswarm/apptest v1.0.0
 	github.com/giantswarm/backoff v0.2.0
-	github.com/giantswarm/helmclient/v4 v4.8.0
-	github.com/giantswarm/k8sclient/v5 v5.12.0
+	github.com/giantswarm/helmclient/v4 v4.8.1-0.20211202142658-417a290314b1
+	github.com/giantswarm/k8sclient/v6 v6.0.0
 	github.com/giantswarm/microerror v0.3.0
 	github.com/giantswarm/micrologger v0.5.0
 	github.com/giantswarm/to v0.4.0
 	github.com/spf13/afero v1.6.0
 	github.com/spf13/cobra v1.2.1
-	k8s.io/api v0.20.13
-	k8s.io/apiextensions-apiserver v0.20.13
-	k8s.io/apimachinery v0.20.13
-	k8s.io/client-go v0.20.13
+	k8s.io/api v0.21.4
+	k8s.io/apiextensions-apiserver v0.21.4
+	k8s.io/apimachinery v0.21.4
+	k8s.io/client-go v0.21.4
 	sigs.k8s.io/yaml v1.3.0
 )
 
@@ -38,6 +38,4 @@ replace (
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.10
 	// Same as go-logr/logr, klog/v2 is using logr v0.2.0
 	k8s.io/klog/v2 v2.2.0 => k8s.io/klog/v2 v2.0.0
-	// Use fork of CAPI with Kubernetes 1.18 support.
-	sigs.k8s.io/cluster-api => github.com/giantswarm/cluster-api v0.3.13-gs
 )

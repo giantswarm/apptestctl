@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Use apiextensions-application to remove CAPI dependency.
+- Upgrade helm to v3.6.3.
+
 ## [0.12.0] - 2021-10-04
 
 ### Changed
