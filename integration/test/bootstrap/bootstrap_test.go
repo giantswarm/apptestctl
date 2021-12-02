@@ -11,7 +11,6 @@ import (
 	"github.com/giantswarm/apiextensions-application/api/v1alpha1"
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/microerror"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
 	"github.com/giantswarm/apptestctl/integration/key"
@@ -30,12 +29,12 @@ func TestBootstrap(t *testing.T) {
 	{
 		config.Logger.Debugf(ctx, "ensuring %#q app CR is deployed", key.ChartMuseumAppName())
 
-		var app v1alpha.App
+		var app v1alpha1.App
 
 		o := func() error {
-			app, err := config.K8sClients.CtrlClient().Get(
+			err := config.K8sClients.CtrlClient().Get(
 				ctx,
-				types.NamespacedName{name: key.ChartMuseumAppName(), namespace: key.Namespace},
+				types.NamespacedName{Name: key.ChartMuseumAppName(), Namespace: key.Namespace()},
 				&app)
 			if err != nil {
 				return microerror.Mask(err)
