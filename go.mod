@@ -7,7 +7,7 @@ require (
 	github.com/giantswarm/appcatalog v0.6.0
 	github.com/giantswarm/apptest v1.0.0
 	github.com/giantswarm/backoff v0.2.0
-	github.com/giantswarm/helmclient/v4 v4.8.1-0.20211202142658-417a290314b1
+	github.com/giantswarm/helmclient/v4 v4.8.1-0.20211202155511-0bfbea24b901
 	github.com/giantswarm/k8sclient/v6 v6.0.0
 	github.com/giantswarm/microerror v0.3.0
 	github.com/giantswarm/micrologger v0.5.0
@@ -27,8 +27,7 @@ replace (
 	github.com/coreos/etcd v3.3.13+incompatible => github.com/coreos/etcd v3.3.25+incompatible
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
-	// Use moby v20.10.5 to fix build issue on darwin.
-	github.com/docker/docker => github.com/moby/moby v20.10.9+incompatible
+	github.com/docker/docker => github.com/moby/moby v20.10.11+incompatible
 	// Use go-logr/logr v0.1.0 due to breaking changes in v0.2.0 that can't be applied.
 	github.com/go-logr/logr v0.2.0 => github.com/go-logr/logr v0.1.0
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
