@@ -7,12 +7,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/giantswarm/apiextensions/v3/pkg/apis/application/v1alpha1"
+	"github.com/giantswarm/apiextensions-application/api/v1alpha1"
 	"github.com/giantswarm/appcatalog"
 	"github.com/giantswarm/apptest"
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/helmclient/v4/pkg/helmclient"
-	"github.com/giantswarm/k8sclient/v5/pkg/k8sclient"
+	"github.com/giantswarm/k8sclient/v6/pkg/k8sclient"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/giantswarm/to"
@@ -226,8 +226,6 @@ func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface)
 
 	{
 		for _, crdYAML := range crds.CRDs() {
-			r.logger.Debugf(ctx, "ensuring CRDs")
-
 			var crd apiextensionsv1.CustomResourceDefinition
 
 			err = yaml.Unmarshal([]byte(crdYAML), &crd)
@@ -235,12 +233,17 @@ func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface)
 				return microerror.Mask(err)
 			}
 
-			err = k8sClients.CRDClient().EnsureCreated(ctx, &crd, backoff.NewMaxRetries(7, 1*time.Second))
-			if err != nil {
+			r.logger.Debugf(ctx, "creating CRD %#q", crd.Name)
+
+			err = k8sClients.CtrlClient().Create(ctx, &crd)
+			if apierrors.IsAlreadyExists(err) {
+				r.logger.Debugf(ctx, "%#q already exists", crd.Name)
+				continue
+			} else if err != nil {
 				return microerror.Mask(err)
 			}
 
-			r.logger.Debugf(ctx, "ensured CRDs")
+			r.logger.Debugf(ctx, "created %#q CRD", crd.Name)
 		}
 	}
 
