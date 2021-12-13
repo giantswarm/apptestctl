@@ -8,12 +8,16 @@ import (
 	"testing"
 	"time"
 
+	"github.com/giantswarm/apiextensions-application/api/v1alpha1"
 	"github.com/giantswarm/backoff"
-	"github.com/giantswarm/helmclient/v4/pkg/helmclient"
 	"github.com/giantswarm/microerror"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 
 	"github.com/giantswarm/apptestctl/integration/key"
+)
+
+const (
+	statusDeployed = "deployed"
 )
 
 // TestBootstrap ensures that the chartmuseum app CR is deployed. This confirms
@@ -25,19 +29,24 @@ func TestBootstrap(t *testing.T) {
 	{
 		config.Logger.Debugf(ctx, "ensuring %#q app CR is deployed", key.ChartMuseumAppName())
 
+		var app v1alpha1.App
+
 		o := func() error {
-			app, err := config.K8sClients.G8sClient().ApplicationV1alpha1().Apps(key.Namespace()).Get(ctx, key.ChartMuseumAppName(), metav1.GetOptions{})
+			err := config.K8sClients.CtrlClient().Get(
+				ctx,
+				types.NamespacedName{Name: key.ChartMuseumAppName(), Namespace: key.Namespace()},
+				&app)
 			if err != nil {
 				return microerror.Mask(err)
 			}
-			if app.Status.Release.Status != helmclient.StatusDeployed {
-				return microerror.Maskf(executionFailedError, "waiting for %#q, current %#q", helmclient.StatusDeployed, app.Status.Release.Status)
+			if app.Status.Release.Status != statusDeployed {
+				return microerror.Maskf(executionFailedError, "waiting for %#q, current %#q", statusDeployed, app.Status.Release.Status)
 			}
 			return nil
 		}
 
 		n := func(err error, t time.Duration) {
-			config.Logger.Errorf(ctx, err, "failed to get app CR status '%s': retrying in %s", helmclient.StatusDeployed, t)
+			config.Logger.Errorf(ctx, err, "failed to get app CR status '%s': retrying in %s", statusDeployed, t)
 		}
 
 		b := backoff.NewConstant(20*time.Minute, 60*time.Second)
