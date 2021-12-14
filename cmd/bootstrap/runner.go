@@ -81,9 +81,24 @@ func (r *runner) Run(cmd *cobra.Command, args []string) error {
 func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) error {
 	var err error
 
+	var logger micrologger.Logger
+	{
+		c := micrologger.ActivationLoggerConfig{
+			Underlying: r.logger,
+
+			Activations: map[string]interface{}{
+				micrologger.KeyLevel: r.flag.LogLevel,
+			},
+		}
+		logger, err = micrologger.NewActivation(c)
+		if err != nil {
+			panic(err)
+		}
+		r.logger = logger
+	}
+
 	var kubeConfig string
 	var restConfig *rest.Config
-
 	{
 		if r.flag.KubeConfig != "" {
 			// Set kube config for passing to the apptest library.
@@ -169,6 +184,8 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		}
 	}
 
+	fmt.Fprintln(r.stdout, "bootstrapping app platform components")
+
 	err = r.ensureCRDs(ctx, k8sClients)
 	if err != nil {
 		return microerror.Mask(err)
@@ -212,6 +229,8 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	if err != nil {
 		return microerror.Mask(err)
 	}
+
+	fmt.Fprintln(r.stdout, "app platform components are ready")
 
 	return nil
 }
