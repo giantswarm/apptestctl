@@ -201,13 +201,15 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		return microerror.Mask(err)
 	}
 
-	if r.flag.InstallOperators {
-		err = r.installOperators(ctx, helmClient, k8sClients)
-		if err != nil {
-			return microerror.Mask(err)
-		}
-	} else {
-		r.logger.LogCtx(ctx, "level", "debug", "message", "skipping installing operators")
+	// If --install-operators is false we stop here. This is useful when we
+	// don't want to use the pinned app-operator and chart-operator versions.
+	if !r.flag.InstallOperators {
+		fmt.Fprintln(r.stdout, "skipping installing operators")
+	}
+
+	err = r.installOperators(ctx, helmClient, k8sClients)
+	if err != nil {
+		return microerror.Mask(err)
 	}
 
 	err = r.installCatalogs(ctx, k8sClients)
