@@ -39,7 +39,7 @@ func (f *flag) Validate() error {
 		return microerror.Maskf(invalidFlagError, "both --%s or --%s must not be set", kubeconfig, kubeconfigPath)
 	}
 	if !containsString([]string{"", "debug", "info", "warning", "error"}, f.LogLevel) {
-		return microerror.Maskf(invalidFlagError, "Log Level must be either of debug, info, warning or error.")
+		return microerror.Maskf(invalidFlagError, "Log level must be either debug, info, warning or error.")
 	}
 
 	return nil
