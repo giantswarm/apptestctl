@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2021-12-15
+
 ### Added
 
 - Add `log-level` flag and default to `error` level.
@@ -17,6 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Use apiextensions-application to remove CAPI dependency.
 - Upgrade helm to v3.6.3.
+- Sync CRDs with `apiextensions-application`.
+
+### Fixed
+
+- Fix `--install-operators` flag so it doesn't wait for `chartmuseum`.
 
 ## [0.12.0] - 2021-10-04
 
@@ -164,7 +171,8 @@ resources are deleted on subsequent test runs.
 
 - Add initial version that bootstraps app-operator, chart-operator and chartmuseum.
 
-[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/giantswarm/apptestctl/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/giantswarm/apptestctl/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/giantswarm/apptestctl/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/giantswarm/apptestctl/compare/v0.10.0...v0.11.0
