@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use apiextensions-application to remove CAPI dependency.
 - Upgrade helm to v3.6.3.
 
+### Fixed
+
+- Fix `--install-operators` flag so it doesn't wait for `chartmuseum`.
+
 ## [0.12.0] - 2021-10-04
 
 ### Changed
