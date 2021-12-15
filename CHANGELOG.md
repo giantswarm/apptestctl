@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Use apiextensions-application to remove CAPI dependency.
 - Upgrade helm to v3.6.3.
+- Sync CRDs with `apiextensions-application`.
 
 ### Fixed
 
