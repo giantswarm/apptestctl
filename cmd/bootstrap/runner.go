@@ -205,6 +205,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	// don't want to use the pinned app-operator and chart-operator versions.
 	if !r.flag.InstallOperators {
 		fmt.Fprintln(r.stdout, "skipping installing operators")
+		return nil
 	}
 
 	err = r.installOperators(ctx, helmClient, k8sClients)
