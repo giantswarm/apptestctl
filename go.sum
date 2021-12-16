@@ -286,8 +286,9 @@ github.com/getsentry/sentry-go v0.11.0/go.mod h1:KBQIxiZAetw62Cj8Ri964vAEWVdgfaU
 github.com/ghodss/yaml v0.0.0-20150909031657-73d445a93680/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/ghodss/yaml v1.0.0 h1:wQHKEahhL6wmXdzwWG11gIVCkOv05bNOh+Rxn0yngAk=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
-github.com/giantswarm/apiextensions-application v0.1.0 h1:mlKPJfZ0mze+L3k7079gqw85joesGB5Lfesc7Fupgiw=
 github.com/giantswarm/apiextensions-application v0.1.0/go.mod h1:O6mg+EdXC9CyTLgi0d3rf6QTXrQX/79iw4kjMJRinig=
+github.com/giantswarm/apiextensions-application v0.2.0 h1:dLPcYBy1xhqOaSay1xG41xd2I+XQG0kIcjVxj3X9twA=
+github.com/giantswarm/apiextensions-application v0.2.0/go.mod h1:O6mg+EdXC9CyTLgi0d3rf6QTXrQX/79iw4kjMJRinig=
 github.com/giantswarm/app/v6 v6.0.0/go.mod h1:oq9qBedss6ctqFAyEgLkBwjKAik+D5C+0LDNQOicLGA=
 github.com/giantswarm/appcatalog v0.6.0 h1:lJMmiPK2pyWQtOaLlBwq0Ut1XrMhcnGeA+3j4OMHyfU=
 github.com/giantswarm/appcatalog v0.6.0/go.mod h1:MaglaykZAeFukjpD/jVHrm/zZFwa9uusuN6BgT4NXpY=
