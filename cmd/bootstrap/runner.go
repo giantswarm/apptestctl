@@ -38,11 +38,11 @@ import (
 )
 
 const (
-	appOperatorVersion            = "5.2.0"
+	appOperatorVersion            = "5.4.0"
 	chartMuseumName               = "chartmuseum"
 	chartMuseumCatalogStorageURL  = "http://chartmuseum-chartmuseum:8080/charts/"
 	chartMuseumVersion            = "2.13.3"
-	chartOperatorVersion          = "2.19.0"
+	chartOperatorVersion          = "2.12.0"
 	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-catalog/"
 	helmStableCatalogName         = "helm-stable"
 	helmStableCatalogStorageURL   = "https://charts.helm.sh/stable/packages/"
