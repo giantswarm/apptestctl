@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Use latest AppCatalogEntry CRD with hardcoded providers removed.
+
 ## [0.14.0] - 2022-01-05
 
 ### Changed

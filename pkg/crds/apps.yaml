@@ -162,8 +162,8 @@ spec:
                 description: Name is the name of the app to be deployed. e.g. kubernetes-prometheus
                 type: string
               namespace:
-                description: Namespace is the namespace where the app should be deployed.
-                  e.g. monitoring
+                description: Namespace is the target namespace where the app should
+                  be deployed e.g. monitoring, it cannot be changed.
                 type: string
               namespaceConfig:
                 description: NamespaceConfig is the namespace config to be applied

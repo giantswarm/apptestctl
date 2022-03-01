@@ -144,10 +144,6 @@ spec:
                       this app is compatible with. Default is empty. Empty list means
                       app is compatible with all providers.
                     items:
-                      enum:
-                      - aws
-                      - azure
-                      - kvm
                       type: string
                     nullable: true
                     type: array
