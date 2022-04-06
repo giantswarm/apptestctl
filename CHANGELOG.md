@@ -115,7 +115,7 @@ DNS settings.
 ### Fixed
 
 - Use shorter resync period and reduce finalizer TTL in app-operator so
-resources are deleted on subsequent test runs. 
+resources are deleted on subsequent test runs.
 
 ## [0.5.2] - 2020-12-01
 

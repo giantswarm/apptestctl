@@ -13,6 +13,7 @@ import (
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/helmclient/v4/pkg/helmclient"
 	"github.com/giantswarm/k8sclient/v6/pkg/k8sclient"
+	"github.com/giantswarm/k8smetadata/pkg/label"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/giantswarm/to"
@@ -353,6 +354,9 @@ func (r *runner) installCatalogs(ctx context.Context, k8sClients k8sclient.Inter
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      name,
 				Namespace: metav1.NamespaceDefault,
+				Labels: map[string]string{
+					label.CatalogVisibility: "internal",
+				},
 			},
 			Spec: v1alpha1.CatalogSpec{
 				Description: name,
