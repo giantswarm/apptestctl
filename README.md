@@ -16,7 +16,7 @@ GO111MODULE=on go install -ldflags "-X 'github.com/giantswarm/apptestctl/pkg/pro
 
 ## Usage
 
-After creating a [kind](https://kind.sigs.k8s.io/) cluster on your local machine, type below command. 
+After creating a [kind](https://kind.sigs.k8s.io/) cluster on your local machine, type below command.
 
 ```sh
 apptestctl bootstrap --kubeconfig="$(kind get kubeconfig)"
