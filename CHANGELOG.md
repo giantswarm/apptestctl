@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update application.giantswarm.io/v1alpha1 Catalog CRD to the latest
+
 ## [0.14.1] - 2022-03-02
 
 ### Fixed
