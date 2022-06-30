@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.2] - 2022-06-30
+
 ### Changed
 
 - Update application.giantswarm.io/v1alpha1 Catalog CRD to the latest
@@ -194,7 +196,8 @@ resources are deleted on subsequent test runs.
 
 - Add initial version that bootstraps app-operator, chart-operator and chartmuseum.
 
-[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.14.1...HEAD
+[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.14.2...HEAD
+[0.14.2]: https://github.com/giantswarm/apptestctl/compare/v0.14.1...v0.14.2
 [0.14.1]: https://github.com/giantswarm/apptestctl/compare/v0.14.0...v0.14.1
 [0.14.0]: https://github.com/giantswarm/apptestctl/compare/v0.13.1...v0.14.0
 [0.13.1]: https://github.com/giantswarm/apptestctl/compare/v0.13.0...v0.13.1
