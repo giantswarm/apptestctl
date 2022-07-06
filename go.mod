@@ -4,21 +4,21 @@ go 1.16
 
 require (
 	github.com/giantswarm/apiextensions-application v0.3.0
-	github.com/giantswarm/appcatalog v0.6.0
-	github.com/giantswarm/apptest v1.0.1
+	github.com/giantswarm/appcatalog v0.9.1
+	github.com/giantswarm/apptest v1.2.0
 	github.com/giantswarm/backoff v1.0.0
-	github.com/giantswarm/helmclient/v4 v4.9.0
+	github.com/giantswarm/helmclient/v4 v4.10.1
 	github.com/giantswarm/k8sclient/v6 v6.1.0
-	github.com/giantswarm/k8smetadata v0.8.0
+	github.com/giantswarm/k8smetadata v0.11.1
 	github.com/giantswarm/microerror v0.4.0
 	github.com/giantswarm/micrologger v1.0.0
 	github.com/giantswarm/to v0.4.0
 	github.com/spf13/afero v1.8.2
 	github.com/spf13/cobra v1.5.0
-	k8s.io/api v0.21.4
-	k8s.io/apiextensions-apiserver v0.21.4
-	k8s.io/apimachinery v0.21.4
-	k8s.io/client-go v0.21.4
+	k8s.io/api v0.23.5
+	k8s.io/apiextensions-apiserver v0.23.5
+	k8s.io/apimachinery v0.23.5
+	k8s.io/client-go v0.23.5
 	sigs.k8s.io/yaml v1.3.0
 )
 
