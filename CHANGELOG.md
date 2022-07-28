@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### fixed
+
+- Catalog CR is fixed to include "Repositories" section
+
 ## [0.14.4] - 2022-07-07
 
 ## [0.14.3] - 2022-07-01
