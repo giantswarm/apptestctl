@@ -368,7 +368,7 @@ func (r *runner) installCatalogs(ctx context.Context, k8sClients k8sclient.Inter
 				Repositories: []v1alpha1.CatalogSpecRepository{
 					{
 						Type: "helm",
-						URL: url,
+						URL:  url,
 					},
 				},
 			},
