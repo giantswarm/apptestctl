@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.5] - 2022-07-28
+
 ### fixed
 
 - Catalog CR is fixed to include "Repositories" section
@@ -206,7 +208,8 @@ resources are deleted on subsequent test runs.
 
 - Add initial version that bootstraps app-operator, chart-operator and chartmuseum.
 
-[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.14.4...HEAD
+[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.14.5...HEAD
+[0.14.5]: https://github.com/giantswarm/apptestctl/compare/v0.14.4...v0.14.5
 [0.14.4]: https://github.com/giantswarm/apptestctl/compare/v0.14.3...v0.14.4
 [0.14.3]: https://github.com/giantswarm/apptestctl/compare/v0.14.2...v0.14.3
 [0.14.2]: https://github.com/giantswarm/apptestctl/compare/v0.14.1...v0.14.2
