@@ -365,6 +365,12 @@ func (r *runner) installCatalogs(ctx context.Context, k8sClients k8sclient.Inter
 					Type: "helm",
 					URL:  url,
 				},
+				Repositories: []v1alpha1.CatalogSpecRepository{
+					{
+						Type: "helm",
+						URL: url,
+					},
+				},
 			},
 		}
 		err = k8sClients.CtrlClient().Create(ctx, catalogCR)
