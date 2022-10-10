@@ -7,9 +7,9 @@ require (
 	github.com/giantswarm/appcatalog v0.9.1
 	github.com/giantswarm/apptest v1.2.1
 	github.com/giantswarm/backoff v1.0.0
-	github.com/giantswarm/helmclient/v4 v4.11.0
+	github.com/giantswarm/helmclient/v4 v4.11.1
 	github.com/giantswarm/k8sclient/v6 v6.1.0
-	github.com/giantswarm/k8smetadata v0.13.0
+	github.com/giantswarm/k8smetadata v0.14.0
 	github.com/giantswarm/microerror v0.4.0
 	github.com/giantswarm/micrologger v1.0.0
 	github.com/giantswarm/to v0.4.0
