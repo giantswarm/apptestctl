@@ -2,7 +2,8 @@
 
 # apptestctl
 
-Command line tool for using the Giant Swarm app platform in integration tests.
+Command line tool for using the Giant Swarm app platform in integration tests. Give a Kubernetes cluster, it deployes app platform
+components (app-operator, chart-operator) and extra tools (chart-museum) to create an App CR testing evironment.
 
 ## Installation
 
