@@ -14,7 +14,7 @@ require (
 	github.com/giantswarm/microerror v0.4.0
 	github.com/giantswarm/micrologger v1.0.0
 	github.com/giantswarm/to v0.4.0
-	github.com/spf13/afero v1.9.3
+	github.com/spf13/afero v1.9.4
 	github.com/spf13/cobra v1.6.1
 	k8s.io/api v0.26.0
 	k8s.io/apiextensions-apiserver v0.26.0
@@ -154,8 +154,8 @@ replace (
 	github.com/coreos/etcd v3.3.10+incompatible => github.com/coreos/etcd v3.3.25+incompatible
 	github.com/coreos/etcd v3.3.13+incompatible => github.com/coreos/etcd v3.3.25+incompatible
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
-	github.com/docker/distribution/v2 => github.com/docker/distribution v2.8.0+incompatible
-	github.com/docker/docker => github.com/moby/moby v20.10.22+incompatible
+	github.com/docker/distribution/v2 => github.com/docker/distribution v2.8.1+incompatible
+	github.com/docker/docker => github.com/moby/moby v20.10.23+incompatible
 	// Use go-logr/logr v0.1.0 due to breaking changes in v0.2.0 that can't be applied.
 	github.com/go-logr/logr v0.2.0 => github.com/go-logr/logr v0.1.0
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
