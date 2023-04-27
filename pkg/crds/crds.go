@@ -19,6 +19,12 @@ var catalogs string
 //go:embed charts.yaml
 var charts string
 
+//go:embed ciliumclusterwidenetworkpolicies.yaml
+var ciliumClusterwideNetworkPolicies string
+
+//go:embed ciliumnetworkpolicies.yaml
+var ciliumNetworkPolicies string
+
 func CRDs() []string {
 	return []string{
 		appCatalogEntries,
@@ -26,5 +32,7 @@ func CRDs() []string {
 		apps,
 		catalogs,
 		charts,
+		ciliumClusterwideNetworkPolicies,
+		ciliumNetworkPolicies,
 	}
 }
