@@ -22,7 +22,6 @@ const (
 
 // TestBootstrap ensures that the chartmuseum app CR is deployed. This confirms
 // that the app platform is installed and can deploy app CRs.
-//
 func TestBootstrap(t *testing.T) {
 	ctx := context.Background()
 
