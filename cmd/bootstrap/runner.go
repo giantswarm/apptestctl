@@ -38,14 +38,15 @@ import (
 )
 
 const (
-	appOperatorVersion            = "6.6.4-a43507ccde1a9e91f0ce44fe4f1d74515daa4152"
-	chartMuseumCatalogName        = "chartmuseum"
-	chartMuseumCatalogStorageURL  = "https://chartmuseum.github.io/charts"
-	chartMuseumName               = "chartmuseum"
-	chartMuseumVersion            = "3.9.3"
-	chartOperatorVersion          = "2.35.0"
-	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-test-catalog/"
-	namespace                     = "giantswarm"
+	appOperatorVersion             = "6.6.4-a43507ccde1a9e91f0ce44fe4f1d74515daa4152"
+	chartMuseumCatalogHelmIndexURL = "https://chartmuseum.github.io/charts"
+	chartMuseumCatalogName         = "apptestctl-chartmuseum"
+	chartMuseumCatalogStorageURL   = "http://chartmuseum:8080/charts/"
+	chartMuseumName                = "chartmuseum"
+	chartMuseumVersion             = "3.9.3"
+	chartOperatorVersion           = "2.35.0"
+	controlPlaneCatalogStorageURL  = "https://giantswarm.github.io/control-plane-test-catalog/"
+	namespace                      = "giantswarm"
 )
 
 type runner struct {
@@ -559,7 +560,7 @@ func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interfa
 		apps := []apptest.App{
 			{
 				CatalogName:   chartMuseumCatalogName,
-				CatalogURL:    chartMuseumCatalogStorageURL,
+				CatalogURL:    chartMuseumCatalogHelmIndexURL,
 				Name:          chartMuseumName,
 				Namespace:     namespace,
 				ValuesYAML:    chartMuseumValuesYAML,
