@@ -38,14 +38,14 @@ import (
 )
 
 const (
-	appOperatorVersion             = "6.6.4-a43507ccde1a9e91f0ce44fe4f1d74515daa4152"
+	appOperatorVersion             = "6.7.0"
 	chartMuseumCatalogHelmIndexURL = "https://chartmuseum.github.io/charts"
 	chartMuseumCatalogName         = "apptestctl-chartmuseum"
 	chartMuseumCatalogStorageURL   = "http://chartmuseum:8080/"
 	chartMuseumName                = "chartmuseum"
 	chartMuseumVersion             = "3.9.3"
 	chartOperatorVersion           = "2.35.0"
-	controlPlaneCatalogStorageURL  = "https://giantswarm.github.io/control-plane-test-catalog/"
+	controlPlaneCatalogStorageURL  = "https://giantswarm.github.io/control-plane-catalog/"
 	namespace                      = "giantswarm"
 )
 

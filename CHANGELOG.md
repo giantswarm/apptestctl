@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Added support for kubernetes 1.25
+- Upgrade app-operator to version 6.7.0
+- Upgrade chart-operator to version 2.35.0
+- Upgrade chartmuseum chart to version 3.9.3
+
 ## [0.15.0] - 2023-04-28
 
 ### Added
