@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0] - 2023-05-11
+
 ### Changed
 
 - Update base container image to alpine:3.18.0.
@@ -226,7 +228,8 @@ resources are deleted on subsequent test runs.
 
 - Add initial version that bootstraps app-operator, chart-operator and chartmuseum.
 
-[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/giantswarm/apptestctl/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/giantswarm/apptestctl/compare/v0.14.5...v0.15.0
 [0.14.5]: https://github.com/giantswarm/apptestctl/compare/v0.14.4...v0.14.5
 [0.14.4]: https://github.com/giantswarm/apptestctl/compare/v0.14.3...v0.14.4
