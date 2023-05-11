@@ -13,7 +13,6 @@ import (
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/helmclient/v4/pkg/helmclient"
 	"github.com/giantswarm/k8sclient/v7/pkg/k8sclient"
-	"github.com/giantswarm/k8smetadata/pkg/label"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/giantswarm/to"
@@ -39,15 +38,15 @@ import (
 )
 
 const (
-	appOperatorVersion            = "5.4.0"
-	chartMuseumName               = "chartmuseum"
-	chartMuseumCatalogStorageURL  = "http://chartmuseum-chartmuseum:8080/charts/"
-	chartMuseumVersion            = "2.13.3"
-	chartOperatorVersion          = "2.20.0"
-	controlPlaneCatalogStorageURL = "https://giantswarm.github.io/control-plane-catalog/"
-	helmStableCatalogName         = "helm-stable"
-	helmStableCatalogStorageURL   = "https://charts.helm.sh/stable/packages/"
-	namespace                     = "giantswarm"
+	appOperatorVersion             = "6.7.0"
+	chartMuseumCatalogHelmIndexURL = "https://chartmuseum.github.io/charts"
+	chartMuseumCatalogName         = "apptestctl-chartmuseum"
+	chartMuseumCatalogStorageURL   = "http://chartmuseum:8080/"
+	chartMuseumName                = "chartmuseum"
+	chartMuseumVersion             = "3.9.3"
+	chartOperatorVersion           = "2.35.0"
+	controlPlaneCatalogStorageURL  = "https://giantswarm.github.io/control-plane-catalog/"
+	namespace                      = "giantswarm"
 )
 
 type runner struct {
@@ -219,7 +218,12 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		return microerror.Mask(err)
 	}
 
-	err = r.ensureChartMuseumPSP(ctx, k8sClients)
+	hasPSP, err := r.hasPSP(ctx, k8sClients)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	err = r.ensureChartMuseumPSP(ctx, k8sClients, hasPSP)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -354,9 +358,6 @@ func (r *runner) installCatalogs(ctx context.Context, k8sClients k8sclient.Inter
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      name,
 				Namespace: metav1.NamespaceDefault,
-				Labels: map[string]string{
-					label.CatalogVisibility: "internal",
-				},
 			},
 			Spec: v1alpha1.CatalogSpec{
 				Description: name,
@@ -386,89 +387,111 @@ func (r *runner) installCatalogs(ctx context.Context, k8sClients k8sclient.Inter
 	return nil
 }
 
-func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.Interface) error {
+func (r *runner) hasPSP(ctx context.Context, k8sClients k8sclient.Interface) (bool, error) {
+
+	list, err := k8sClients.K8sClient().Discovery().ServerGroups()
+	if err != nil {
+		return false, microerror.Mask(err)
+	}
+
+	for _, group := range list.Groups {
+		if group.Name == "policy" {
+			for _, gv := range group.Versions {
+				if gv.GroupVersion == "policy/v1beta1" {
+					return true, nil
+				}
+			}
+		}
+	}
+
+	return false, nil
+}
+
+func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.Interface, installPSP bool) error {
 	name := "chartmuseum-psp"
-	r.logger.Debugf(ctx, "ensuring psp %#q", name)
+	r.logger.Debugf(ctx, "ensuring additional chartmuseum resources %#q", name)
 
 	o := func() error {
-		{
-			clusterRole := &rbacv1.ClusterRole{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: name,
-				},
-				Rules: []rbacv1.PolicyRule{
-					{
-						APIGroups:     []string{"extensions"},
-						Resources:     []string{"podsecuritypolicies"},
-						ResourceNames: []string{name},
-						Verbs:         []string{"use"},
+		if installPSP {
+			{
+				clusterRole := &rbacv1.ClusterRole{
+					ObjectMeta: metav1.ObjectMeta{
+						Name: name,
 					},
-				},
+					Rules: []rbacv1.PolicyRule{
+						{
+							APIGroups:     []string{"extensions"},
+							Resources:     []string{"podsecuritypolicies"},
+							ResourceNames: []string{name},
+							Verbs:         []string{"use"},
+						},
+					},
+				}
+				_, err := k8sClients.K8sClient().RbacV1().ClusterRoles().Create(ctx, clusterRole, metav1.CreateOptions{})
+				if apierrors.IsAlreadyExists(err) {
+					r.logger.Debugf(ctx, "clusterRole %#q already exists", name)
+					// fall through
+				} else if err != nil {
+					return microerror.Mask(err)
+				}
 			}
-			_, err := k8sClients.K8sClient().RbacV1().ClusterRoles().Create(ctx, clusterRole, metav1.CreateOptions{})
-			if apierrors.IsAlreadyExists(err) {
-				r.logger.Debugf(ctx, "clusterRole %#q already exists", name)
-				// fall through
-			} else if err != nil {
-				return microerror.Mask(err)
+			{
+				clusterRoleBinding := &rbacv1.ClusterRoleBinding{
+					ObjectMeta: metav1.ObjectMeta{
+						Name: name,
+					},
+					Subjects: []rbacv1.Subject{
+						{
+							Kind:      "ServiceAccount",
+							Name:      "chartmuseum",
+							Namespace: namespace,
+						},
+					},
+					RoleRef: rbacv1.RoleRef{
+						Kind:     "ClusterRole",
+						Name:     name,
+						APIGroup: "rbac.authorization.k8s.io",
+					},
+				}
+				_, err := k8sClients.K8sClient().RbacV1().ClusterRoleBindings().Create(ctx, clusterRoleBinding, metav1.CreateOptions{})
+				if apierrors.IsAlreadyExists(err) {
+					r.logger.Debugf(ctx, "clusterRoleBinding %#q already exists", name)
+					// fall through
+				} else if err != nil {
+					return microerror.Mask(err)
+				}
 			}
-		}
-		{
-			clusterRoleBinding := &rbacv1.ClusterRoleBinding{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: name,
-				},
-				Subjects: []rbacv1.Subject{
-					{
-						Kind:      "ServiceAccount",
-						Name:      "chartmuseum",
-						Namespace: namespace,
+			{
+				psp := &policyv1beta1.PodSecurityPolicy{
+					ObjectMeta: metav1.ObjectMeta{
+						Name: name,
 					},
-				},
-				RoleRef: rbacv1.RoleRef{
-					Kind:     "ClusterRole",
-					Name:     name,
-					APIGroup: "rbac.authorization.k8s.io",
-				},
-			}
-			_, err := k8sClients.K8sClient().RbacV1().ClusterRoleBindings().Create(ctx, clusterRoleBinding, metav1.CreateOptions{})
-			if apierrors.IsAlreadyExists(err) {
-				r.logger.Debugf(ctx, "clusterRoleBinding %#q already exists", name)
-				// fall through
-			} else if err != nil {
-				return microerror.Mask(err)
-			}
-		}
-		{
-			psp := &policyv1beta1.PodSecurityPolicy{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: name,
-				},
-				Spec: policyv1beta1.PodSecurityPolicySpec{
-					AllowPrivilegeEscalation: to.BoolP(true),
-					Volumes: []policyv1beta1.FSType{
-						policyv1beta1.All,
+					Spec: policyv1beta1.PodSecurityPolicySpec{
+						AllowPrivilegeEscalation: to.BoolP(true),
+						Volumes: []policyv1beta1.FSType{
+							policyv1beta1.All,
+						},
+						RunAsUser: policyv1beta1.RunAsUserStrategyOptions{
+							Rule: policyv1beta1.RunAsUserStrategyRunAsAny,
+						},
+						SupplementalGroups: policyv1beta1.SupplementalGroupsStrategyOptions{
+							Rule: policyv1beta1.SupplementalGroupsStrategyRunAsAny,
+						},
+						FSGroup: policyv1beta1.FSGroupStrategyOptions{
+							Rule: policyv1beta1.FSGroupStrategyRunAsAny,
+						},
+						SELinux: policyv1beta1.SELinuxStrategyOptions{
+							Rule: policyv1beta1.SELinuxStrategyRunAsAny,
+						},
 					},
-					RunAsUser: policyv1beta1.RunAsUserStrategyOptions{
-						Rule: policyv1beta1.RunAsUserStrategyRunAsAny,
-					},
-					SupplementalGroups: policyv1beta1.SupplementalGroupsStrategyOptions{
-						Rule: policyv1beta1.SupplementalGroupsStrategyRunAsAny,
-					},
-					FSGroup: policyv1beta1.FSGroupStrategyOptions{
-						Rule: policyv1beta1.FSGroupStrategyRunAsAny,
-					},
-					SELinux: policyv1beta1.SELinuxStrategyOptions{
-						Rule: policyv1beta1.SELinuxStrategyRunAsAny,
-					},
-				},
-			}
-			_, err := k8sClients.K8sClient().PolicyV1beta1().PodSecurityPolicies().Create(ctx, psp, metav1.CreateOptions{})
-			if apierrors.IsAlreadyExists(err) {
-				r.logger.Debugf(ctx, "psp %#q already exists", name)
-				// fall through
-			} else if err != nil {
-				return microerror.Mask(err)
+				}
+				_, err := k8sClients.K8sClient().PolicyV1beta1().PodSecurityPolicies().Create(ctx, psp, metav1.CreateOptions{})
+				if apierrors.IsAlreadyExists(err) {
+					r.logger.Debugf(ctx, "psp %#q already exists", name)
+					// fall through
+				} else if err != nil {
+					return microerror.Mask(err)
+				}
 			}
 		}
 
@@ -523,7 +546,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 		return microerror.Mask(err)
 	}
 
-	r.logger.Debugf(ctx, "ensured psp %#q", name)
+	r.logger.Debugf(ctx, "ensured additional chartmuseum resources %#q", name)
 
 	return nil
 }
@@ -536,8 +559,8 @@ func (r *runner) installChartMuseum(ctx context.Context, appTest apptest.Interfa
 
 		apps := []apptest.App{
 			{
-				CatalogName:   helmStableCatalogName,
-				CatalogURL:    helmStableCatalogStorageURL,
+				CatalogName:   chartMuseumCatalogName,
+				CatalogURL:    chartMuseumCatalogHelmIndexURL,
 				Name:          chartMuseumName,
 				Namespace:     namespace,
 				ValuesYAML:    chartMuseumValuesYAML,
@@ -642,7 +665,7 @@ func (r *runner) installOperator(ctx context.Context, helmClient helmclient.Inte
 func (r *runner) waitForChartMuseum(ctx context.Context, appTest apptest.Interface) error {
 	var err error
 
-	deployName := fmt.Sprintf("%s-%s", chartMuseumName, chartMuseumName)
+	deployName := chartMuseumName
 
 	r.logger.Debugf(ctx, "waiting for ready %#q deployment", deployName)
 
