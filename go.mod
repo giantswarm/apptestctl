@@ -155,12 +155,12 @@ replace (
 	github.com/coreos/etcd v3.3.13+incompatible => github.com/coreos/etcd v3.3.25+incompatible
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/docker/distribution/v2 => github.com/docker/distribution v2.8.1+incompatible
-	github.com/docker/docker => github.com/moby/moby v20.10.24+incompatible
+	github.com/docker/docker => github.com/moby/moby v20.10.25+incompatible
 	// Use go-logr/logr v0.1.0 due to breaking changes in v0.2.0 that can't be applied.
 	github.com/go-logr/logr v0.2.0 => github.com/go-logr/logr v0.1.0
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
-	github.com/imdario/mergo => github.com/imdario/mergo v0.3.15
+	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 	github.com/opencontainers/runc v0.1.1 => github.com/opencontainers/runc v1.0.0-rc93
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.11
 	// Same as go-logr/logr, klog/v2 is using logr v0.2.0
