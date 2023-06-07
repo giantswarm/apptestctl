@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Install `ServiceMonitors` and `PodMonitors` CRDs
+  as part of test bootstrap.
+
 ## [0.16.0] - 2023-05-11
 
 ### Changed
