@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.0] - 2023-06-07
+
 ### Added
 
 - Install `ServiceMonitors` and `PodMonitors` CRDs
@@ -233,7 +235,8 @@ resources are deleted on subsequent test runs.
 
 - Add initial version that bootstraps app-operator, chart-operator and chartmuseum.
 
-[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.16.0...HEAD
+[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.17.0...HEAD
+[0.17.0]: https://github.com/giantswarm/apptestctl/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/giantswarm/apptestctl/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/giantswarm/apptestctl/compare/v0.14.5...v0.15.0
 [0.14.5]: https://github.com/giantswarm/apptestctl/compare/v0.14.4...v0.14.5
