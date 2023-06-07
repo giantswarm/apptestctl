@@ -25,6 +25,12 @@ var ciliumClusterwideNetworkPolicies string
 //go:embed ciliumnetworkpolicies.yaml
 var ciliumNetworkPolicies string
 
+//go:embed servicemonitors.yaml
+var serviceMonitors string
+
+//go:embed podmonitors.yaml
+var podMonitors string
+
 func CRDs() []string {
 	return []string{
 		appCatalogEntries,
@@ -34,5 +40,7 @@ func CRDs() []string {
 		charts,
 		ciliumClusterwideNetworkPolicies,
 		ciliumNetworkPolicies,
+		serviceMonitors,
+		podMonitors,
 	}
 }
