@@ -17,3 +17,9 @@ crds=( servicemonitors podmonitors )
 for crd in "${crds[@]}"; do
     curl -s "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_${crd}.yaml" > "../pkg/crds/${crd}.yaml"
 done
+
+crds=( verticalpodautoscalers )
+
+for crd in "${crds[@]}"; do
+    curl -s "https://raw.githubusercontent.com/giantswarm/vertical-pod-autoscaler-crd/master/helm/vertical-pod-autoscaler-crd/templates/${crd}.yaml" > "../pkg/crds/${crd}.yaml"
+done

@@ -31,6 +31,9 @@ var serviceMonitors string
 //go:embed podmonitors.yaml
 var podMonitors string
 
+//go:embed verticalpodautoscalers.yaml
+var verticalPodAutoscalers string
+
 func CRDs() []string {
 	return []string{
 		appCatalogEntries,
@@ -42,5 +45,6 @@ func CRDs() []string {
 		ciliumNetworkPolicies,
 		serviceMonitors,
 		podMonitors,
+		verticalPodAutoscalers,
 	}
 }
