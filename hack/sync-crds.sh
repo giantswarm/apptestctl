@@ -21,5 +21,5 @@ done
 crds=( verticalpodautoscalers )
 
 for crd in "${crds[@]}"; do
-    curl -s "https://raw.githubusercontent.com/giantswarm/vertical-pod-autoscaler-crd/master/helm/vertical-pod-autoscaler-crd/templates/${crd}.yaml" > "../pkg/crds/${crd}.yaml"
+    curl -s "https://raw.githubusercontent.com/FairwindsOps/charts/master/stable/vpa/crds/vpa-v1-crd.yaml" > "../pkg/crds/${crd}.yaml"
 done
