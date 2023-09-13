@@ -72,7 +72,7 @@ require (
 	github.com/gosuri/uitable v0.0.4 // indirect
 	github.com/gregjones/httpcache v0.0.0-20180305231024-9cad4c3443a7 // indirect
 	github.com/huandu/xstrings v1.3.3 // indirect
-	github.com/imdario/mergo v0.3.12 // indirect
+	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
@@ -118,7 +118,7 @@ require (
 	github.com/xlab/treeprint v1.1.0 // indirect
 	go.starlark.net v0.0.0-20200306205701-8dd3e2ee1dd5 // indirect
 	golang.org/x/crypto v0.13.0 // indirect
-	golang.org/x/net v0.10.0 // indirect
+	golang.org/x/net v0.15.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.12.0 // indirect
@@ -158,16 +158,12 @@ replace (
 	// Use go-logr/logr v0.1.0 due to breaking changes in v0.2.0 that can't be applied.
 	github.com/go-logr/logr v0.2.0 => github.com/go-logr/logr v0.1.0
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
-	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
+	github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.0+incompatible
+	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.9.22
 	github.com/opencontainers/runc => github.com/opencontainers/runc v1.1.9
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.11
+	golang.org/x/net => golang.org/x/net v0.15.0
 	// Same as go-logr/logr, klog/v2 is using logr v0.2.0
 	k8s.io/klog/v2 v2.2.0 => k8s.io/klog/v2 v2.0.0
 )
-
-replace github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.0+incompatible
-
-replace github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.9.22
-
-replace golang.org/x/net => golang.org/x/net v0.15.0
