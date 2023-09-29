@@ -167,3 +167,5 @@ replace (
 	// Same as go-logr/logr, klog/v2 is using logr v0.2.0
 	k8s.io/klog/v2 v2.2.0 => k8s.io/klog/v2 v2.0.0
 )
+
+replace github.com/klauspost/compress => github.com/klauspost/compress v1.16.7
