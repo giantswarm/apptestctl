@@ -23,3 +23,7 @@ crds=( verticalpodautoscalers )
 for crd in "${crds[@]}"; do
     curl -s "https://raw.githubusercontent.com/FairwindsOps/charts/master/stable/vpa/crds/vpa-v1-crd.yaml" > "../pkg/crds/${crd}.yaml"
 done
+
+# Kyverno
+
+curl -s "https://raw.githubusercontent.com/giantswarm/kyverno-app/main/helm/kyverno/crd/crd-8.yaml" > "../pkg/crds/policyexception.yaml"
