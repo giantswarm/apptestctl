@@ -160,7 +160,7 @@ replace (
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 	github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.2+incompatible
-	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.1
+	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.3
 	github.com/opencontainers/runc => github.com/opencontainers/runc v1.1.9
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.11
 	golang.org/x/net => golang.org/x/net v0.17.0
@@ -168,4 +168,4 @@ replace (
 	k8s.io/klog/v2 v2.2.0 => k8s.io/klog/v2 v2.0.0
 )
 
-replace github.com/klauspost/compress => github.com/klauspost/compress v1.16.7
+replace github.com/klauspost/compress => github.com/klauspost/compress v1.17.2
