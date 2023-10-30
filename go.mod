@@ -77,7 +77,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.17.0 // indirect
+	github.com/klauspost/compress v1.17.2 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
 	github.com/lib/pq v1.10.7 // indirect
@@ -160,7 +160,7 @@ replace (
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 	github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.2+incompatible
-	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.3
+	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.4
 	github.com/opencontainers/runc => github.com/opencontainers/runc v1.1.9
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.11
 	golang.org/x/net => golang.org/x/net v0.17.0
