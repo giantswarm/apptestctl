@@ -161,7 +161,7 @@ replace (
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 	github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.2+incompatible
 	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.4
-	github.com/opencontainers/runc => github.com/opencontainers/runc v1.1.9
+	github.com/opencontainers/runc => github.com/opencontainers/runc v1.1.10
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.11
 	golang.org/x/net => golang.org/x/net v0.17.0
 	// Same as go-logr/logr, klog/v2 is using logr v0.2.0
