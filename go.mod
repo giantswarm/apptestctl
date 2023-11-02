@@ -159,7 +159,7 @@ replace (
 	github.com/go-logr/logr v0.2.0 => github.com/go-logr/logr v0.1.0
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
-	github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.2+incompatible
+	github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.3+incompatible
 	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.4
 	github.com/opencontainers/runc => github.com/opencontainers/runc v1.1.10
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.11
