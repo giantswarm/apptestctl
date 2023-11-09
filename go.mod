@@ -149,23 +149,12 @@ require (
 )
 
 replace (
-	github.com/containerd/containerd v1.3.4 => github.com/containerd/containerd v1.4.4
-	github.com/coreos/etcd v3.3.10+incompatible => github.com/coreos/etcd v3.3.25+incompatible
-	github.com/coreos/etcd v3.3.13+incompatible => github.com/coreos/etcd v3.3.25+incompatible
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
-	github.com/docker/distribution/v2 => github.com/docker/distribution v2.8.1+incompatible
 	github.com/docker/docker => github.com/moby/moby v20.10.26+incompatible
-	// Use go-logr/logr v0.1.0 due to breaking changes in v0.2.0 that can't be applied.
-	github.com/go-logr/logr v0.2.0 => github.com/go-logr/logr v0.1.0
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
+	github.com/klauspost/compress => github.com/klauspost/compress v1.17.2
 	github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.3+incompatible
 	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.4
-	github.com/opencontainers/runc => github.com/opencontainers/runc v1.1.10
-	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.11
 	golang.org/x/net => golang.org/x/net v0.18.0
-	// Same as go-logr/logr, klog/v2 is using logr v0.2.0
-	k8s.io/klog/v2 v2.2.0 => k8s.io/klog/v2 v2.0.0
 )
-
-replace github.com/klauspost/compress => github.com/klauspost/compress v1.17.2
