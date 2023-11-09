@@ -124,7 +124,7 @@ require (
 	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/term v0.14.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	golang.org/x/time v0.3.0 // indirect
+	golang.org/x/time v0.4.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220502173005-c8bf987b8c21 // indirect
 	google.golang.org/grpc v1.49.0 // indirect
@@ -155,6 +155,6 @@ replace (
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 	github.com/klauspost/compress => github.com/klauspost/compress v1.17.2
 	github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.3+incompatible
-	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.4
+	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.5
 	golang.org/x/net => golang.org/x/net v0.18.0
 )
