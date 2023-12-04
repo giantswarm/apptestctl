@@ -15,12 +15,9 @@ workflows:
             tags:
               only: /^v.*/
 
-      - architect/push-to-docker:
+      - architect/push-to-registries:
           context: architect
-          name: push-apptestctl-to-quay
-          image: "quay.io/giantswarm/apptestctl"
-          username_envar: "QUAY_USERNAME"
-          password_envar: "QUAY_PASSWORD"
+          name: push-to-registries
           requires:
             - go-build-apptestctl
           filters:
