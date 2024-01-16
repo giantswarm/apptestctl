@@ -155,6 +155,6 @@ replace (
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 	github.com/klauspost/compress => github.com/klauspost/compress v1.17.4
 	github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.3+incompatible
-	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.7
+	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.9
 	golang.org/x/net => golang.org/x/net v0.20.0
 )
