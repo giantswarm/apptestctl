@@ -3,3 +3,5 @@ CVE-2020-8561
 
 # pkg:golang/helm.sh/helm/v3@v3.11.1
 CVE-2024-25620
+CVE-2019-25210
+CVE-2024-26147
