@@ -158,3 +158,5 @@ replace (
 	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.12
 	golang.org/x/net => golang.org/x/net v0.22.0
 )
+
+replace google.golang.org/protobuf v1.31.0 => google.golang.org/protobuf v1.33.0
