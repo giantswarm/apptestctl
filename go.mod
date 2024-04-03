@@ -156,7 +156,7 @@ replace (
 	github.com/klauspost/compress => github.com/klauspost/compress v1.17.7
 	github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.5+incompatible
 	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.12
-	golang.org/x/net => golang.org/x/net v0.22.0
+	golang.org/x/net => golang.org/x/net v0.23.0
 )
 
 replace google.golang.org/protobuf v1.31.0 => google.golang.org/protobuf v1.33.0
