@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Promote Kyverno `PolicyException` CRD to `v2beta1`.
+
 ## [0.18.0] - 2023-10-09
 
 ### Added
