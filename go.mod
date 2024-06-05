@@ -6,7 +6,7 @@ require (
 	github.com/giantswarm/apiextensions-application v0.5.1
 	github.com/giantswarm/appcatalog v1.0.0
 	github.com/giantswarm/apptest v1.2.1
-	github.com/giantswarm/backoff v1.0.0
+	github.com/giantswarm/backoff v1.0.1
 	github.com/giantswarm/helmclient/v4 v4.11.2
 	github.com/giantswarm/k8sclient/v7 v7.0.1
 	github.com/giantswarm/microerror v0.4.1
@@ -31,7 +31,7 @@ require (
 	github.com/Masterminds/squirrel v1.5.3 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
+	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/containerd/containerd v1.6.18 // indirect
