@@ -8,7 +8,7 @@ require (
 	github.com/giantswarm/apiextensions-application v0.6.2
 	github.com/giantswarm/appcatalog v1.0.0
 	github.com/giantswarm/apptest v1.4.0
-	github.com/giantswarm/backoff v1.0.0
+	github.com/giantswarm/backoff v1.0.1
 	github.com/giantswarm/helmclient/v4 v4.12.0
 	github.com/giantswarm/k8sclient/v7 v7.2.0
 	github.com/giantswarm/microerror v0.4.1
@@ -36,7 +36,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blang/semver/v4 v4.0.0 // indirect
-	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
+	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/containerd/containerd v1.7.12 // indirect
@@ -130,14 +130,14 @@ require (
 	go.opentelemetry.io/otel/metric v1.19.0 // indirect
 	go.opentelemetry.io/otel/trace v1.19.0 // indirect
 	go.starlark.net v0.0.0-20230525235612-a134d8f9ddca // indirect
-	golang.org/x/crypto v0.23.0 // indirect
+	golang.org/x/crypto v0.24.0 // indirect
 	golang.org/x/exp v0.0.0-20220827204233-334a2380cb91 // indirect
-	golang.org/x/net v0.23.0 // indirect
+	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/oauth2 v0.17.0 // indirect
-	golang.org/x/sync v0.6.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
-	golang.org/x/term v0.20.0 // indirect
-	golang.org/x/text v0.15.0 // indirect
+	golang.org/x/sync v0.7.0 // indirect
+	golang.org/x/sys v0.21.0 // indirect
+	golang.org/x/term v0.21.0 // indirect
+	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231120223509-83a465c0220f // indirect
@@ -183,7 +183,7 @@ replace (
 	github.com/klauspost/compress => github.com/klauspost/compress v1.17.8
 	github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.7+incompatible
 	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.16
-	golang.org/x/net => golang.org/x/net v0.25.0
+	golang.org/x/net => golang.org/x/net v0.26.0
 )
 
 replace google.golang.org/protobuf v1.31.0 => google.golang.org/protobuf v1.33.0
