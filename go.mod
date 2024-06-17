@@ -179,7 +179,7 @@ replace (
 	github.com/docker/docker => github.com/moby/moby v26.1.4+incompatible
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
-	github.com/klauspost/compress => github.com/klauspost/compress v1.17.8
+	github.com/klauspost/compress => github.com/klauspost/compress v1.17.9
 	github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.7+incompatible
 	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.16
 	golang.org/x/net => golang.org/x/net v0.26.0
