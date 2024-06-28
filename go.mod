@@ -181,7 +181,7 @@ replace (
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 	github.com/klauspost/compress => github.com/klauspost/compress v1.17.9
 	github.com/nats-io/jwt => github.com/nats-io/jwt v2.5.7+incompatible
-	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.16
+	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.17
 	golang.org/x/net => golang.org/x/net v0.26.0
 )
 
