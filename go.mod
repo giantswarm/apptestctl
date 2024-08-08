@@ -19,7 +19,7 @@ require (
 	k8s.io/api v0.30.1
 	k8s.io/apiextensions-apiserver v0.30.1
 	k8s.io/apimachinery v0.30.1
-	k8s.io/client-go v1.5.2
+	k8s.io/client-go v11.0.0+incompatible
 	sigs.k8s.io/yaml v1.4.0
 )
 
