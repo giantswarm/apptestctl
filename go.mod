@@ -16,9 +16,9 @@ require (
 	github.com/giantswarm/to v0.4.0
 	github.com/spf13/afero v1.11.0
 	github.com/spf13/cobra v1.8.1
-	k8s.io/api v0.30.1
-	k8s.io/apiextensions-apiserver v0.30.1
-	k8s.io/apimachinery v0.30.1
+	k8s.io/api v0.30.3
+	k8s.io/apiextensions-apiserver v0.30.3
+	k8s.io/apimachinery v0.30.3
 	k8s.io/client-go v1.5.2
 	sigs.k8s.io/yaml v1.4.0
 )
@@ -78,6 +78,7 @@ require (
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.4.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
+	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/gosuri/uitable v0.0.4 // indirect
 	github.com/gregjones/httpcache v0.0.0-20180305231024-9cad4c3443a7 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
@@ -107,6 +108,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
@@ -147,9 +149,9 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	helm.sh/helm/v3 v3.14.4 // indirect
-	k8s.io/apiserver v0.30.1 // indirect
-	k8s.io/cli-runtime v0.29.0 // indirect
-	k8s.io/component-base v0.30.1 // indirect
+	k8s.io/apiserver v0.30.3 // indirect
+	k8s.io/cli-runtime v0.30.3 // indirect
+	k8s.io/component-base v0.30.3 // indirect
 	k8s.io/klog/v2 v2.120.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20240228011516-70dd3763d340 // indirect
 	k8s.io/kubectl v0.29.0 // indirect
@@ -164,14 +166,14 @@ require (
 
 // Pinning Kubernetes versions to v0.28.x
 replace (
-	k8s.io/api => k8s.io/api v0.28.10
-	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.28.10
-	k8s.io/apimachinery => k8s.io/apimachinery v0.28.10
-	k8s.io/apiserver => k8s.io/apiserver v0.28.10
-	k8s.io/cli-runtime => k8s.io/cli-runtime v0.28.10
-	k8s.io/client-go => k8s.io/client-go v0.28.10
-	k8s.io/component-base => k8s.io/component-base v0.28.10
-	k8s.io/kubectl => k8s.io/kubectl v0.28.10
+	k8s.io/api => k8s.io/api v0.30.3
+	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.30.3
+	k8s.io/apimachinery => k8s.io/apimachinery v0.30.3
+	k8s.io/apiserver => k8s.io/apiserver v0.30.3
+	k8s.io/cli-runtime => k8s.io/cli-runtime v0.30.3
+	k8s.io/client-go => k8s.io/client-go v0.30.3
+	k8s.io/component-base => k8s.io/component-base v0.30.3
+	k8s.io/kubectl => k8s.io/kubectl v0.30.3
 )
 
 replace (
