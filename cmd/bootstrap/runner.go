@@ -299,7 +299,7 @@ func (r *runner) ensureNamespace(ctx context.Context, k8sClients k8sclient.Inter
 				return microerror.Mask(err)
 			}
 			if n.Status.Phase != v1.NamespaceActive {
-				return microerror.Maskf(executionFailedError, fmt.Sprintf("namespace in status %#q", n.Status.Phase))
+				return microerror.Maskf(executionFailedError, "namespace in status %#q", n.Status.Phase)
 			}
 		}
 
