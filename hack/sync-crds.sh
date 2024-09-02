@@ -27,3 +27,11 @@ done
 # Kyverno
 
 curl -s "https://raw.githubusercontent.com/giantswarm/kyverno-app/main/helm/kyverno/crd/crd-8.yaml" > "../pkg/crds/policyexception.yaml"
+
+# Prometheus
+
+curl -s "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd-full/monitoring.coreos.com_prometheuses.yaml" > "../pkg/crds/prometheuses.yaml"
+
+# RemoteWrite
+
+curl -s "https://raw.githubusercontent.com/giantswarm/prometheus-meta-operator/main/config/crd/monitoring.giantswarm.io_remotewrites.yaml" > "../pkg/crds/remotewrites.yaml"

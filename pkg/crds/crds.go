@@ -37,6 +37,12 @@ var verticalPodAutoscalers string
 //go:embed policyexception.yaml
 var policyException string
 
+//go:embed prometheuses.yaml
+var prometheuses string
+
+//go:embed remotewrites.yaml
+var remotewrites string
+
 func CRDs() []string {
 	return []string{
 		appCatalogEntries,
@@ -50,5 +56,7 @@ func CRDs() []string {
 		podMonitors,
 		verticalPodAutoscalers,
 		policyException,
+		prometheuses,
+		remotewrites,
 	}
 }
