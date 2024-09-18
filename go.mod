@@ -180,7 +180,6 @@ replace (
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 	github.com/klauspost/compress => github.com/klauspost/compress v1.17.9
-	github.com/nats-io/jwt => github.com/nats-io/jwt v2.6.0+incompatible
 	golang.org/x/net => golang.org/x/net v0.29.0
 )
 
