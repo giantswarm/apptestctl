@@ -31,14 +31,17 @@ var serviceMonitors string
 //go:embed podmonitors.yaml
 var podMonitors string
 
+//go:embed prometheuses.yaml
+var prometheuses string
+
+//go:embed prometheusrules.yaml
+var prometheusrules string
+
 //go:embed verticalpodautoscalers.yaml
 var verticalPodAutoscalers string
 
 //go:embed policyexception.yaml
 var policyException string
-
-//go:embed prometheuses.yaml
-var prometheuses string
 
 //go:embed remotewrites.yaml
 var remotewrites string
@@ -54,9 +57,10 @@ func CRDs() []string {
 		ciliumNetworkPolicies,
 		serviceMonitors,
 		podMonitors,
+		prometheuses,
+		prometheusrules,
 		verticalPodAutoscalers,
 		policyException,
-		prometheuses,
 		remotewrites,
 	}
 }
