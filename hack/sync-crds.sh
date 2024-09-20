@@ -12,7 +12,7 @@ for crd in "${crds[@]}"; do
     curl -s "https://raw.githubusercontent.com/cilium/cilium/main/pkg/k8s/apis/cilium.io/client/crds/v2/${crd}.yaml" > "../pkg/crds/${crd}.yaml"
 done
 
-crds=( servicemonitors podmonitors )
+crds=( servicemonitors podmonitors prometheuses prometheusrules )
 
 for crd in "${crds[@]}"; do
     curl -s "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_${crd}.yaml" > "../pkg/crds/${crd}.yaml"
@@ -27,10 +27,6 @@ done
 # Kyverno
 
 curl -s "https://raw.githubusercontent.com/giantswarm/kyverno-app/main/helm/kyverno/crd/crd-8.yaml" > "../pkg/crds/policyexception.yaml"
-
-# Prometheus
-
-curl -s "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd-full/monitoring.coreos.com_prometheuses.yaml" > "../pkg/crds/prometheuses.yaml"
 
 # RemoteWrite
 
