@@ -140,12 +140,41 @@ spec:
             - storage
             - title
             type: object
+          status:
+            description: CatalogStatus represents the current state of the catalog.
+            properties:
+              helmRepositoryList:
+                description: HelmRepositoryList contains the list of Flux HelmRepository
+                  custom resources that have been successfully created from the Catalog
+                  object.
+                nullable: true
+                properties:
+                  entries:
+                    description: Entries of HelmRepository custom resources.
+                    items:
+                      description: HelmRepositoryRef represents a basic HelmRepository
+                        custom resource information.
+                      properties:
+                        name:
+                          type: string
+                        namespace:
+                          type: string
+                      required:
+                      - name
+                      - namespace
+                      type: object
+                    type: array
+                required:
+                - entries
+                type: object
+            type: object
         required:
         - spec
         type: object
     served: true
     storage: true
-    subresources: {}
+    subresources:
+      status: {}
 status:
   acceptedNames:
     kind: ""

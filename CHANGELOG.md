@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `ClusterPolicies` CRDs.
+
+### Changed
+
+- Run `sync-crds` script.
+
 ## [0.21.0] - 2024-09-20
 
 ### Added
