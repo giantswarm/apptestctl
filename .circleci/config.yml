@@ -6,29 +6,33 @@ orbs:
 workflows:
   test:
     jobs:
-      - architect/go-build:
-          context: architect
-          name: go-build-apptestctl
-          binary: apptestctl
-          filters:
+    - architect/go-build:
+        context: architect
+        name: go-build-apptestctl
+        binary: apptestctl
+        filters:
             # Trigger job also on git tag.
-            tags:
-              only: /^v.*/
+          tags:
+            only: /^v.*/
 
-      - architect/push-to-registries:
-          context: architect
-          name: push-to-registries
-          requires:
-            - go-build-apptestctl
-          filters:
+    - architect/push-to-registries:
+        context: architect
+        name: push-to-registries
+        requires:
+        - go-build-apptestctl
+        filters:
             # Needed to trigger job also on git tag.
-            tags:
-              only: /^v.*/
+          tags:
+            only: /^v.*/
 
-      - architect/integration-test:
-          context: architect
-          name: integration-test-bootstrap
-          setup-script: "integration/test/bootstrap/setup.sh"
-          test-dir: "integration/test/bootstrap"
-          requires:
-            - go-build-apptestctl
+          branches:
+            ignore:
+            - main
+            - master
+    - architect/integration-test:
+        context: architect
+        name: integration-test-bootstrap
+        setup-script: integration/test/bootstrap/setup.sh
+        test-dir: integration/test/bootstrap
+        requires:
+        - go-build-apptestctl
