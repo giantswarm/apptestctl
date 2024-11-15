@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.1] - 2024-10-28
+
+### Changed
+
+- Update dependencies.
+
+## [0.22.0] - 2024-10-24
+
+### Added
+
+- Add `ClusterPolicies` CRDs.
+
+### Changed
+
+- Run `sync-crds` script.
+
 ## [0.21.0] - 2024-09-20
 
 ### Added
@@ -274,7 +290,9 @@ resources are deleted on subsequent test runs.
 
 - Add initial version that bootstraps app-operator, chart-operator and chartmuseum.
 
-[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.21.0...HEAD
+[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.22.1...HEAD
+[0.22.1]: https://github.com/giantswarm/apptestctl/compare/v0.22.0...v0.22.1
+[0.22.0]: https://github.com/giantswarm/apptestctl/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/giantswarm/apptestctl/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/giantswarm/apptestctl/compare/v0.19.1...v0.20.0
 [0.19.1]: https://github.com/giantswarm/apptestctl/compare/v0.19.0...v0.19.1

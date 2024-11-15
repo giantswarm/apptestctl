@@ -43,6 +43,9 @@ var verticalPodAutoscalers string
 //go:embed policyexception.yaml
 var policyException string
 
+//go:embed clusterpolicies.yaml
+var clusterPolicies string
+
 //go:embed remotewrites.yaml
 var remotewrites string
 
@@ -55,6 +58,7 @@ func CRDs() []string {
 		charts,
 		ciliumClusterwideNetworkPolicies,
 		ciliumNetworkPolicies,
+		clusterPolicies,
 		serviceMonitors,
 		podMonitors,
 		prometheuses,

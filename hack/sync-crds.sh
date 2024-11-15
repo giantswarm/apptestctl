@@ -27,6 +27,7 @@ done
 # Kyverno
 
 curl -s "https://raw.githubusercontent.com/giantswarm/kyverno-app/main/helm/kyverno/crd/crd-8.yaml" > "../pkg/crds/policyexception.yaml"
+curl -s "https://raw.githubusercontent.com/giantswarm/kyverno-app/refs/heads/main/helm/kyverno/crd/crd-6.yaml" > "../pkg/crds/clusterpolicies.yaml"
 
 # RemoteWrite
 
