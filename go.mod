@@ -23,7 +23,7 @@ require (
 	sigs.k8s.io/yaml v1.4.0
 )
 
-require github.com/giantswarm/k8sclient/v7 v7.2.0
+require github.com/giantswarm/k8sclient/v8 v8.0.0
 
 require (
 	dario.cat/mergo v1.0.1 // indirect
