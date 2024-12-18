@@ -183,7 +183,7 @@ replace (
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 	github.com/klauspost/compress => github.com/klauspost/compress v1.17.11
-	golang.org/x/net => golang.org/x/net v0.32.0
+	golang.org/x/net => golang.org/x/net v0.33.0
 )
 
 replace google.golang.org/protobuf v1.31.0 => google.golang.org/protobuf v1.33.0
