@@ -2,7 +2,7 @@ module github.com/giantswarm/apptestctl
 
 go 1.23
 
-toolchain go1.23.4
+toolchain go1.23.5
 
 require (
 	github.com/giantswarm/apiextensions-application v0.6.2
