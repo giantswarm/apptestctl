@@ -18,7 +18,6 @@ import (
 	"github.com/giantswarm/to"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
 	policyv1beta1 "k8s.io/api/policy/v1beta1"
@@ -184,7 +183,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		}
 	}
 
-	fmt.Fprintln(r.stdout, "bootstrapping app platform components")
+	_, _ = fmt.Fprintln(r.stdout, "bootstrapping app platform components")
 
 	err = r.ensureCRDs(ctx, k8sClients)
 	if err != nil {
@@ -204,7 +203,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	// If --install-operators is false we stop here. This is useful when we
 	// don't want to use the pinned app-operator and chart-operator versions.
 	if !r.flag.InstallOperators {
-		fmt.Fprintln(r.stdout, "skipping installing operators")
+		_, _ = fmt.Fprintln(r.stdout, "skipping installing operators")
 		return nil
 	}
 
@@ -238,7 +237,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		return microerror.Mask(err)
 	}
 
-	fmt.Fprintln(r.stdout, "app platform components are ready")
+	_, _ = fmt.Fprintln(r.stdout, "app platform components are ready")
 
 	return nil
 }
@@ -279,7 +278,7 @@ func (r *runner) ensureNamespace(ctx context.Context, k8sClients k8sclient.Inter
 
 	o := func() error {
 		{
-			n := &corev1.Namespace{
+			n := &v1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: namespace,
 				},
@@ -496,7 +495,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 		}
 
 		{
-			tcp := corev1.ProtocolTCP
+			tcp := v1.ProtocolTCP
 			chartmuseumPort := intstr.FromInt(8080)
 
 			np := &networkingv1.NetworkPolicy{
