@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `ScaledObjects` CRDs.
+
 ## [0.22.1] - 2024-10-28
 
 ### Changed
