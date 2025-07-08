@@ -49,6 +49,9 @@ var clusterPolicies string
 //go:embed remotewrites.yaml
 var remotewrites string
 
+//go:embed scaledobjects.yaml
+var scaledObjects string
+
 func CRDs() []string {
 	return []string{
 		appCatalogEntries,
@@ -66,5 +69,6 @@ func CRDs() []string {
 		verticalPodAutoscalers,
 		policyException,
 		remotewrites,
+		scaledObjects,
 	}
 }
