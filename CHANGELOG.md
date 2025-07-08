@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.1] - 2025-07-08
+
 ### Changed
 
 - Add `ScaledObjects` to crds.go file.
@@ -300,7 +302,8 @@ resources are deleted on subsequent test runs.
 
 - Add initial version that bootstraps app-operator, chart-operator and chartmuseum.
 
-[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.23.0...HEAD
+[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.23.1...HEAD
+[0.23.1]: https://github.com/giantswarm/apptestctl/compare/v0.23.0...v0.23.1
 [0.23.0]: https://github.com/giantswarm/apptestctl/compare/v0.22.1...v0.23.0
 [0.22.1]: https://github.com/giantswarm/apptestctl/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/giantswarm/apptestctl/compare/v0.21.0...v0.22.0
