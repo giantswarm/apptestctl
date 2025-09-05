@@ -15,12 +15,10 @@ import (
 	"github.com/giantswarm/k8sclient/v8/pkg/k8sclient"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
-	"github.com/giantswarm/to"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	v1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
-	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	schedulingv1 "k8s.io/api/scheduling/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -455,38 +453,6 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 				_, err := k8sClients.K8sClient().RbacV1().ClusterRoleBindings().Create(ctx, clusterRoleBinding, metav1.CreateOptions{})
 				if apierrors.IsAlreadyExists(err) {
 					r.logger.Debugf(ctx, "clusterRoleBinding %#q already exists", name)
-					// fall through
-				} else if err != nil {
-					return microerror.Mask(err)
-				}
-			}
-			{
-				psp := &policyv1beta1.PodSecurityPolicy{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: name,
-					},
-					Spec: policyv1beta1.PodSecurityPolicySpec{
-						AllowPrivilegeEscalation: to.BoolP(true),
-						Volumes: []policyv1beta1.FSType{
-							policyv1beta1.All,
-						},
-						RunAsUser: policyv1beta1.RunAsUserStrategyOptions{
-							Rule: policyv1beta1.RunAsUserStrategyRunAsAny,
-						},
-						SupplementalGroups: policyv1beta1.SupplementalGroupsStrategyOptions{
-							Rule: policyv1beta1.SupplementalGroupsStrategyRunAsAny,
-						},
-						FSGroup: policyv1beta1.FSGroupStrategyOptions{
-							Rule: policyv1beta1.FSGroupStrategyRunAsAny,
-						},
-						SELinux: policyv1beta1.SELinuxStrategyOptions{
-							Rule: policyv1beta1.SELinuxStrategyRunAsAny,
-						},
-					},
-				}
-				_, err := k8sClients.K8sClient().PolicyV1beta1().PodSecurityPolicies().Create(ctx, psp, metav1.CreateOptions{})
-				if apierrors.IsAlreadyExists(err) {
-					r.logger.Debugf(ctx, "psp %#q already exists", name)
 					// fall through
 				} else if err != nil {
 					return microerror.Mask(err)
