@@ -168,7 +168,7 @@ require (
 )
 
 replace (
-	github.com/docker/docker => github.com/moby/moby v28.5.0+incompatible
+	github.com/docker/docker => github.com/moby/moby v28.5.1+incompatible
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 	github.com/klauspost/compress => github.com/klauspost/compress v1.18.0
