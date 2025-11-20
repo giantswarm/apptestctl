@@ -3,3 +3,5 @@ CVE-2025-32387 until=2025-12-31 # helm.sh/helm/v3
 CVE-2020-8561 until=2025-12-31 # k8s.io/apiserver@v0.26.0
 CVE-2025-47291 until=2025-12-31 # github.com/containerd/containerd@v1.7.28
 CVE-2025-47290 until=2025-12-31 # github.com/containerd/containerd@v1.7.28
+CVE-2025-47914 until=2025-12-20 # golang.org/x/crypto@v0.44.0
+CVE-2025-58181 until=2025-12-20 # golang.org/x/crypto@v0.44.0
