@@ -52,6 +52,9 @@ var remotewrites string
 //go:embed scaledobjects.yaml
 var scaledObjects string
 
+//go:embed gateway-api.yaml
+var gatewayAPI string
+
 func CRDs() []string {
 	return []string{
 		appCatalogEntries,
@@ -62,6 +65,7 @@ func CRDs() []string {
 		ciliumClusterwideNetworkPolicies,
 		ciliumNetworkPolicies,
 		clusterPolicies,
+		gatewayAPI,
 		serviceMonitors,
 		podMonitors,
 		prometheuses,
