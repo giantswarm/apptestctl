@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add Gateway API + Gateway API Inference Extension CRDs
+
+### Changed
+
+- Update CRD files
+    pkg/crds/appcatalogentries.yaml
+    pkg/crds/appcatalogs.yaml
+    pkg/crds/apps.yaml
+    pkg/crds/catalogs.yaml
+    pkg/crds/charts.yaml
+    pkg/crds/ciliumclusterwidenetworkpolicies.yaml
+    pkg/crds/ciliumnetworkpolicies.yaml
+    pkg/crds/podmonitors.yaml
+    pkg/crds/prometheuses.yaml
+    pkg/crds/prometheusrules.yaml
+    pkg/crds/servicemonitors.yaml
+    pkg/crds/verticalpodautoscalers.yaml
+
 ## [0.24.0] - 2025-09-05
 
 ### Changed

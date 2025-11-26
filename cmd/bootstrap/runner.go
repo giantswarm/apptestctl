@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/giantswarm/apiextensions-application/api/v1alpha1"
@@ -240,29 +241,72 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	return nil
 }
 
+// splitYAMLDocuments splits a YAML string containing multiple documents separated by "---"
+// into individual document strings. It handles edge cases like empty documents and
+// single-document strings.
+func splitYAMLDocuments(yamlContent string) []string {
+	var documents []string
+
+	// Split by YAML document separator
+	parts := strings.Split(yamlContent, "\n---\n")
+
+	for _, part := range parts {
+		// Also handle "---" at the start of content
+		subParts := strings.Split(part, "\n---")
+		for _, subPart := range subParts {
+			trimmed := strings.TrimSpace(subPart)
+			// Skip empty documents and standalone separators
+			if trimmed != "" && trimmed != "---" {
+				documents = append(documents, trimmed)
+			}
+		}
+	}
+
+	// Handle edge case where content doesn't have separators (single document)
+	if len(documents) == 0 {
+		trimmed := strings.TrimSpace(yamlContent)
+		if trimmed != "" {
+			documents = append(documents, trimmed)
+		}
+	}
+
+	return documents
+}
+
 func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface) error {
 	var err error
 
 	{
 		for _, crdYAML := range crds.CRDs() {
-			var crd apiextensionsv1.CustomResourceDefinition
+			// Split the YAML content in case it contains multiple documents
+			documents := splitYAMLDocuments(crdYAML)
 
-			err = yaml.Unmarshal([]byte(crdYAML), &crd)
-			if err != nil {
-				return microerror.Mask(err)
+			// Process each document separately
+			for _, document := range documents {
+				var crd apiextensionsv1.CustomResourceDefinition
+
+				err = yaml.Unmarshal([]byte(document), &crd)
+				if err != nil {
+					return microerror.Mask(err)
+				}
+
+				if crd.Name == "" {
+					continue
+				}
+
+				r.logger.Debugf(ctx, "creating CRD %#q", crd.Name)
+
+				err = k8sClients.CtrlClient().Create(ctx, &crd)
+				if apierrors.IsAlreadyExists(err) {
+					r.logger.Debugf(ctx, "%#q already exists", crd.Name)
+					continue
+				} else if err != nil {
+					r.logger.Errorf(ctx, err, "failed to create CRD %#q", crd.Name)
+					return microerror.Mask(err)
+				}
+
+				r.logger.Debugf(ctx, "created %#q CRD", crd.Name)
 			}
-
-			r.logger.Debugf(ctx, "creating CRD %#q", crd.Name)
-
-			err = k8sClients.CtrlClient().Create(ctx, &crd)
-			if apierrors.IsAlreadyExists(err) {
-				r.logger.Debugf(ctx, "%#q already exists", crd.Name)
-				continue
-			} else if err != nil {
-				return microerror.Mask(err)
-			}
-
-			r.logger.Debugf(ctx, "created %#q CRD", crd.Name)
 		}
 	}
 
