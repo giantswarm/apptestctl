@@ -171,7 +171,7 @@ replace (
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 	github.com/klauspost/compress => github.com/klauspost/compress v1.18.1
-	golang.org/x/crypto => golang.org/x/crypto v0.45.0 // indirect
+	golang.org/x/crypto => golang.org/x/crypto v0.45.0
 	golang.org/x/net => golang.org/x/net v0.47.0
 	google.golang.org/protobuf v1.31.0 => google.golang.org/protobuf v1.33.0
 )
