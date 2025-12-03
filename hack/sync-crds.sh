@@ -32,3 +32,7 @@ curl -s "https://raw.githubusercontent.com/kyverno/kyverno/refs/tags/v1.14.4/con
 # RemoteWrite
 
 curl -s "https://raw.githubusercontent.com/giantswarm/prometheus-meta-operator/main/config/crd/monitoring.giantswarm.io_remotewrites.yaml" > "../pkg/crds/remotewrites.yaml"
+
+# Gateway API + Gateway API Inference Extension
+# keep the version aligned with the version in giantswarm/gateway-api-bundle
+helm template oci://giantswarmpublic.azurecr.io/giantswarm-catalog/gateway-api-crds:1.4.0 --set install.inferencepools=standard > "../pkg/crds/gateway-api.yaml"

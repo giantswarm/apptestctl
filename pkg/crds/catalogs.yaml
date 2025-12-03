@@ -5,7 +5,6 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.7.0
-  creationTimestamp: null
   name: catalogs.application.giantswarm.io
 spec:
   group: application.giantswarm.io
