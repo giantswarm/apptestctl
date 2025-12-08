@@ -137,10 +137,10 @@ require (
 	golang.org/x/crypto v0.44.0 // indirect
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sync v0.18.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
-	golang.org/x/term v0.37.0 // indirect
-	golang.org/x/text v0.31.0 // indirect
+	golang.org/x/sync v0.19.0 // indirect
+	golang.org/x/sys v0.39.0 // indirect
+	golang.org/x/term v0.38.0 // indirect
+	golang.org/x/text v0.32.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250303144028-a0af3efb3deb // indirect
 	google.golang.org/grpc v1.72.1 // indirect
@@ -171,7 +171,7 @@ replace (
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 	github.com/klauspost/compress => github.com/klauspost/compress v1.18.2
-	golang.org/x/crypto => golang.org/x/crypto v0.45.0
+	golang.org/x/crypto => golang.org/x/crypto v0.46.0
 	golang.org/x/net => golang.org/x/net v0.47.0
 	google.golang.org/protobuf v1.31.0 => google.golang.org/protobuf v1.33.0
 )
