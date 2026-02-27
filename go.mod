@@ -166,5 +166,5 @@ replace (
 	github.com/docker/docker => github.com/moby/moby v28.5.2+incompatible
 	github.com/klauspost/compress => github.com/klauspost/compress v1.18.4
 	golang.org/x/crypto => golang.org/x/crypto v0.48.0
-	golang.org/x/net => golang.org/x/net v0.50.0
+	golang.org/x/net => golang.org/x/net v0.51.0
 )
