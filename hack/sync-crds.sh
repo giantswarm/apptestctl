@@ -35,4 +35,4 @@ curl -s "https://raw.githubusercontent.com/giantswarm/prometheus-meta-operator/m
 
 # Gateway API + Gateway API Inference Extension
 # keep the version aligned with the version in giantswarm/gateway-api-bundle
-helm template oci://giantswarmpublic.azurecr.io/giantswarm-catalog/gateway-api-crds:1.4.0 --set install.inferencepools=standard > "../pkg/crds/gateway-api.yaml"
+helm template oci://gsoci.azurecr.io/charts/giantswarm/gateway-api-crds:1.4.0 --set install.inferencepools=standard > "../pkg/crds/gateway-api.yaml"
