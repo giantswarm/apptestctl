@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `bootstrap` now waits for the created CRDs to be established and visible in API discovery before installing app-operator and chart-operator. This fixes flaky bootstrap failures like `no matches for kind "VerticalPodAutoscaler" in version "autoscaling.k8s.io/v1"`.
+
 ### Changed
 
 - Release binaries now include darwin/amd64, darwin/arm64, windows/amd64, and windows/arm64 alongside the existing linux targets. Windows binaries are named `apptestctl-windows-<arch>.exe`.
