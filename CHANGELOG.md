@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.0] - 2026-07-23
+
 ### Fixed
 
 - `bootstrap` now waits for the created CRDs to be established and visible in API discovery before installing app-operator and chart-operator. This fixes flaky bootstrap failures like `no matches for kind "VerticalPodAutoscaler" in version "autoscaling.k8s.io/v1"`.
@@ -355,7 +357,8 @@ resources are deleted on subsequent test runs.
 
 - Add initial version that bootstraps app-operator, chart-operator and chartmuseum.
 
-[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.25.1...HEAD
+[Unreleased]: https://github.com/giantswarm/apptestctl/compare/v0.26.0...HEAD
+[0.26.0]: https://github.com/giantswarm/apptestctl/compare/v0.25.1...v0.26.0
 [0.25.1]: https://github.com/giantswarm/apptestctl/compare/v0.25.0...v0.25.1
 [0.25.0]: https://github.com/giantswarm/apptestctl/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/giantswarm/apptestctl/compare/v0.23.2...v0.24.0
