@@ -26,6 +26,7 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -276,6 +277,8 @@ func splitYAMLDocuments(yamlContent string) []string {
 func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface) error {
 	var err error
 
+	var crdNames []string
+
 	{
 		for _, crdYAML := range crds.CRDs() {
 			// Split the YAML content in case it contains multiple documents
@@ -294,6 +297,8 @@ func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface)
 					continue
 				}
 
+				crdNames = append(crdNames, crd.Name)
+
 				r.logger.Debugf(ctx, "creating CRD %#q", crd.Name)
 
 				err = k8sClients.CtrlClient().Create(ctx, &crd)
@@ -308,6 +313,75 @@ func (r *runner) ensureCRDs(ctx context.Context, k8sClients k8sclient.Interface)
 				r.logger.Debugf(ctx, "created %#q CRD", crd.Name)
 			}
 		}
+	}
+
+	err = r.waitForCRDs(ctx, k8sClients, crdNames)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	return nil
+}
+
+// waitForCRDs blocks until every CRD is established and its served versions
+// appear in API discovery. Installing the operator charts straight after
+// creating the CRDs races the API server's discovery refresh, making helm
+// fail with "resource mapping not found" for kinds the charts render based
+// on capabilities, e.g. VerticalPodAutoscaler.
+func (r *runner) waitForCRDs(ctx context.Context, k8sClients k8sclient.Interface, crdNames []string) error {
+	for _, crdName := range crdNames {
+		r.logger.Debugf(ctx, "waiting for CRD %#q to be established", crdName)
+
+		o := func() error {
+			var crd apiextensionsv1.CustomResourceDefinition
+			err := k8sClients.CtrlClient().Get(ctx, types.NamespacedName{Name: crdName}, &crd)
+			if err != nil {
+				return microerror.Mask(err)
+			}
+
+			established := false
+			for _, condition := range crd.Status.Conditions {
+				if condition.Type == apiextensionsv1.Established && condition.Status == apiextensionsv1.ConditionTrue {
+					established = true
+				}
+			}
+			if !established {
+				return microerror.Maskf(executionFailedError, "CRD %#q is not established yet", crdName)
+			}
+
+			for _, version := range crd.Spec.Versions {
+				if !version.Served {
+					continue
+				}
+
+				groupVersion := fmt.Sprintf("%s/%s", crd.Spec.Group, version.Name)
+
+				resources, err := k8sClients.K8sClient().Discovery().ServerResourcesForGroupVersion(groupVersion)
+				if err != nil {
+					return microerror.Maskf(executionFailedError, "%#q is not in API discovery yet", groupVersion)
+				}
+
+				found := false
+				for _, resource := range resources.APIResources {
+					if resource.Name == crd.Spec.Names.Plural {
+						found = true
+					}
+				}
+				if !found {
+					return microerror.Maskf(executionFailedError, "%#q is not in API discovery for %#q yet", crd.Spec.Names.Plural, groupVersion)
+				}
+			}
+
+			return nil
+		}
+		b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
+
+		err := backoff.Retry(o, b)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+
+		r.logger.Debugf(ctx, "CRD %#q is established", crdName)
 	}
 
 	return nil
