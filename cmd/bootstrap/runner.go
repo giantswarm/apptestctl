@@ -11,7 +11,7 @@ import (
 	"github.com/giantswarm/apiextensions-application/api/v1alpha1"
 	"github.com/giantswarm/appcatalog"
 	"github.com/giantswarm/apptest"
-	"github.com/giantswarm/backoff"
+	"github.com/giantswarm/backoff/v2"
 	"github.com/giantswarm/helmclient/v4/pkg/helmclient"
 	"github.com/giantswarm/k8sclient/v8/pkg/k8sclient"
 	"github.com/giantswarm/microerror"
