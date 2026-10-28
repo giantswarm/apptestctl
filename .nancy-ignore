@@ -1,3 +1,37 @@
-CVE-2025-47291 until=2026-04-30 # github.com/containerd/containerd@v1.7.30
-CVE-2025-47290 until=2026-04-30 # github.com/containerd/containerd@v1.7.30
-CVE-2026-35206 until=2026-05-13 # helm.sh/helm/v3@v3.20.1
+CVE-2026-10722 until=2026-11-27 # github.com/cilium/ebpf@v0.9.1 since=2026-10-28
+CVE-2025-47290 until=2026-11-27 # github.com/containerd/containerd@v1.7.36 since=2026-10-28
+CVE-2025-47291 until=2026-11-27 # github.com/containerd/containerd@v1.7.36 since=2026-10-28
+CVE-2026-71482 until=2026-11-27 # github.com/containerd/stargz-snapshotter/estargz@v0.14.3 since=2026-10-28
+CVE-2026-85732 until=2026-11-27 # oras.land/oras-go@v1.2.7 since=2026-10-28
+CVE-2026-48978 until=2026-11-27 # oras.land/oras-go@v1.2.7 since=2026-10-28
+CVE-2026-63308 until=2026-11-27 # helm.sh/helm/v3@v3.20.2 since=2026-10-28
+CVE-2026-46600 until=2026-11-27 # golang.org/x/net@v0.55.0 since=2026-10-28
+CVE-2026-78659 until=2026-11-27 # golang.org/x/net@v0.55.0 since=2026-10-28
+CVE-2026-78660 until=2026-11-27 # golang.org/x/net@v0.55.0 since=2026-10-28
+CVE-2026-78663 until=2026-11-27 # golang.org/x/net@v0.55.0 since=2026-10-28
+CVE-2026-78669 until=2026-11-27 # golang.org/x/net@v0.55.0 since=2026-10-28
+CVE-2026-97032 until=2026-11-27 # golang.org/x/net@v0.55.0 since=2026-10-28
+CVE-2026-39828 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-39830 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-39831 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-46595 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-39827 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-56855 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-78662 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-56854 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-39832 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-39834 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-39835 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-42508 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-39829 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-39833 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-46598 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2026-46597 until=2026-11-27 # golang.org/x/crypto@v0.50.0 since=2026-10-28
+CVE-2025-58058 until=2026-11-27 # github.com/ulikunitz/xz@v0.5.9 since=2026-10-28
+CVE-2025-52881 until=2026-11-27 # github.com/opencontainers/runc@v1.1.14 since=2026-10-28
+CVE-2026-41579 until=2026-11-27 # github.com/opencontainers/runc@v1.1.14 since=2026-10-28
+CVE-2025-31133 until=2026-11-27 # github.com/opencontainers/runc@v1.1.14 since=2026-10-28
+CVE-2025-52565 until=2026-11-27 # github.com/opencontainers/runc@v1.1.14 since=2026-10-28
+CVE-2026-61801 until=2026-11-27 # github.com/moby/sys/user@v0.3.0 since=2026-10-28
+CVE-2026-116586 until=2026-11-27 # github.com/go-jose/go-jose/v4@v4.1.4 since=2026-10-28
+CVE-2026-116585 until=2026-11-27 # github.com/go-jose/go-jose/v4@v4.1.4 since=2026-10-28
