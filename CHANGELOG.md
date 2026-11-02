@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Make pre-commit pass with `golangci-lint` 2.15.0: use the `chartMuseumName` constant for the chartmuseum ServiceAccount and NetworkPolicy names (`goconst`).
+
 ## [0.26.0] - 2026-07-23
 
 ### Fixed
