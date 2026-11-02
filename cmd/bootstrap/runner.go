@@ -558,7 +558,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 					Subjects: []rbacv1.Subject{
 						{
 							Kind:      "ServiceAccount",
-							Name:      "chartmuseum",
+							Name:      chartMuseumName,
 							Namespace: namespace,
 						},
 					},
@@ -584,7 +584,7 @@ func (r *runner) ensureChartMuseumPSP(ctx context.Context, k8sClients k8sclient.
 
 			np := &networkingv1.NetworkPolicy{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:      "chartmuseum",
+					Name:      chartMuseumName,
 					Namespace: namespace,
 				},
 				Spec: networkingv1.NetworkPolicySpec{
