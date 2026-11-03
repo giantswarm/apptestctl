@@ -1,3 +1,4 @@
-CVE-2025-47291 until=2026-04-30 # github.com/containerd/containerd@v1.7.30
-CVE-2025-47290 until=2026-04-30 # github.com/containerd/containerd@v1.7.30
-CVE-2026-35206 until=2026-05-13 # helm.sh/helm/v3@v3.20.1
+CVE-2025-47290 until=2027-11-03 # github.com/containerd/containerd@v1.7.36 only affects containerd v2.1.0
+CVE-2025-47291 until=2027-11-03 # github.com/containerd/containerd@v1.7.36 only affects containerd v2.0.1 to v2.0.4
+CVE-2026-85732 until=2026-12-03 # oras.land/oras-go@v1.2.7 advisory is for oras-go/v2, nancy matches v1, giantswarm/helmclient#1025
+CVE-2026-48978 until=2026-12-03 # oras.land/oras-go@v1.2.7 affected, no v1 fix (GHSA-xf85-363p-868w), giantswarm/helmclient#1025
