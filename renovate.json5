@@ -21,7 +21,7 @@
   ],
   "packageRules": [
     {
-      // app-operator and chart-operator are released as a pair, update them together.
+      // integration-test-bootstrap tests both operators together, update them in one PR.
       "matchManagers": ["custom.regex"],
       "matchDepNames": ["app-operator", "chart-operator"],
       "groupName": "app platform operators",
