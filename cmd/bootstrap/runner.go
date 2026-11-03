@@ -37,13 +37,13 @@ import (
 )
 
 const (
-	appOperatorVersion             = "6.7.0"
+	appOperatorVersion             = "7.5.4"
 	chartMuseumCatalogHelmIndexURL = "https://chartmuseum.github.io/charts"
 	chartMuseumCatalogName         = "apptestctl-chartmuseum"
 	chartMuseumCatalogStorageURL   = "http://chartmuseum:8080/"
 	chartMuseumName                = "chartmuseum"
 	chartMuseumVersion             = "3.9.3"
-	chartOperatorVersion           = "2.35.0"
+	chartOperatorVersion           = "4.2.2"
 	controlPlaneCatalogStorageURL  = "https://giantswarm.github.io/control-plane-catalog/"
 	namespace                      = "giantswarm"
 )
