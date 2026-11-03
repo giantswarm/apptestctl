@@ -11,7 +11,7 @@ import (
 	"github.com/giantswarm/apiextensions-application/api/v1alpha1"
 	"github.com/giantswarm/appcatalog"
 	"github.com/giantswarm/apptest"
-	"github.com/giantswarm/backoff"
+	"github.com/giantswarm/backoff/v2"
 	"github.com/giantswarm/helmclient/v4/pkg/helmclient"
 	"github.com/giantswarm/k8sclient/v8/pkg/k8sclient"
 	"github.com/giantswarm/microerror"
@@ -37,13 +37,13 @@ import (
 )
 
 const (
-	appOperatorVersion             = "6.7.0"
+	appOperatorVersion             = "7.5.4"
 	chartMuseumCatalogHelmIndexURL = "https://chartmuseum.github.io/charts"
 	chartMuseumCatalogName         = "apptestctl-chartmuseum"
 	chartMuseumCatalogStorageURL   = "http://chartmuseum:8080/"
 	chartMuseumName                = "chartmuseum"
 	chartMuseumVersion             = "3.9.3"
-	chartOperatorVersion           = "2.35.0"
+	chartOperatorVersion           = "4.2.2"
 	controlPlaneCatalogStorageURL  = "https://giantswarm.github.io/control-plane-catalog/"
 	namespace                      = "giantswarm"
 )
