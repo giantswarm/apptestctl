@@ -9,12 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Upgrade app-operator to version 7.5.4 and chart-operator to version 4.2.2. The control-plane-catalog index no longer lists app-operator 6.7.0 or chart-operator 2.35.0, so `bootstrap` failed with `no app 'app-operator' in index.yaml with given appVersion '6.7.0'`.
+- Pass `isManagementCluster` to the operators as a boolean. The chart-operator 4.2.2 values schema rejects the string `"true"`.
 - Make pre-commit pass with `golangci-lint` 2.15.0: use the `chartMuseumName` constant for the chartmuseum ServiceAccount and NetworkPolicy names (`goconst`).
 - Update the architect orb to `10.16.7`. nancy now scans only the packages that are built, and CI builds with Go `1.27.3`.
 
 ### Security
 
 - Update `helm.sh/helm/v3` to `v3.22.1`, which takes the k8s modules to `v0.37.1`, together with `controller-runtime` `v0.25.2` and `golang.org/x/net` `v0.62.0`. This fixes the vulnerabilities nancy reports on main that have an upstream fix. The `golang.org/x/net` and `golang.org/x/crypto` replace pins are gone; binaries so far shipped `x/net` `v0.55.0` through that pin.
+- Remove the temporary `.nancy-ignore` entries for the vulnerabilities these updates fix and for modules that are not built, which nancy no longer scans. The entries that remain are below.
 - `.nancy-ignore` excludes two `oras-go` CVEs until 2026-12-03, which come in through `oras-go` v1 in `helmclient`: CVE-2026-48978 affects `oras-go` v1 with no fix, and CVE-2026-85732 is an `oras-go/v2` advisory that nancy matches against v1.
 - `.nancy-ignore` also excludes CVE-2025-47290 and CVE-2025-47291 until 2027-11-03. nancy reports them for `containerd` v1.7, but they only affect containerd v2.
 - `.nancy-ignore` also excludes CVE-2026-63308 until 2027-11-03. nancy reports it for `helm.sh/helm/v3` `v3.22.1`, which already has the fix from `v3.22.0`.
