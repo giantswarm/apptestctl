@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `bootstrap` now installs `app-operator` 7.5.4 and `chart-operator` 4.2.2. The old 6.7.0 and 2.35.0 releases were removed from `control-plane-catalog` by the cleanup of releases older than 3 years, so `bootstrap` failed with `no app app-operator in index.yaml with given appVersion 6.7.0`.
+- Pass `isManagementCluster` to the operators as a boolean, as `chart-operator` 4.x validates it in its values schema.
+
 ### Changed
 
 - Make pre-commit pass with `golangci-lint` 2.15.0: use the `chartMuseumName` constant for the chartmuseum ServiceAccount and NetworkPolicy names (`goconst`).
