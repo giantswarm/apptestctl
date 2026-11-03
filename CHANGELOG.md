@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `bootstrap` now installs app-operator `7.5.4` and chart-operator `4.2.2` instead of the `6.7.0` and `2.35.0` pins from 2023. Renovate keeps both versions up to date from the control-plane-catalog. `isManagementCluster` is now passed as a boolean, as the chart-operator 4.x values schema requires.
+- The new app-operator and chart-operator charts no longer ship PodSecurityPolicy resources, so `bootstrap` no longer works on clusters older than Kubernetes 1.25 with PSP admission enabled.
 - Make pre-commit pass with `golangci-lint` 2.15.0: use the `chartMuseumName` constant for the chartmuseum ServiceAccount and NetworkPolicy names (`goconst`).
 
 ## [0.26.0] - 2026-07-23

@@ -5,4 +5,26 @@
     // Go specific config - https://github.com/giantswarm/renovate-presets/blob/main/lang-go.json5
     "github>giantswarm/renovate-presets:lang-go.json5",
   ],
+  "customManagers": [
+    {
+      // Track the app-operator and chart-operator versions that `apptestctl
+      // bootstrap` installs from the control-plane-catalog. The constants are
+      // marked with a `// renovate: depName=<chart>` comment.
+      "customType": "regex",
+      "managerFilePatterns": ["/^cmd/bootstrap/runner\\.go$/"],
+      "matchStrings": [
+        "// renovate: depName=(?<depName>\\S+)\\n\\s*\\w+\\s*=\\s*\"(?<currentValue>[^\"]+)\"",
+      ],
+      "datasourceTemplate": "helm",
+      "registryUrlTemplate": "https://giantswarm.github.io/control-plane-catalog/",
+    },
+  ],
+  "packageRules": [
+    {
+      // app-operator and chart-operator are released as a pair, update them together.
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["app-operator", "chart-operator"],
+      "groupName": "app platform operators",
+    },
+  ],
 }
