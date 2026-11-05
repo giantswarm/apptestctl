@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update the architect orb to `10.16.7`. nancy now scans only the packages that are built, and CI builds with Go `1.27.3`.
+- Update github.com/giantswarm/appcatalog to v1.1.1 (giantswarm/apptestctl#731)
 
 ### Security
 
