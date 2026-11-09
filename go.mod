@@ -175,5 +175,5 @@ require (
 
 replace (
 	github.com/docker/docker => github.com/moby/moby v28.5.2+incompatible
-	github.com/klauspost/compress => github.com/klauspost/compress v1.20.3
+	github.com/klauspost/compress => github.com/klauspost/compress v1.20.4
 )
