@@ -6,7 +6,7 @@ toolchain go1.26.10
 
 require (
 	github.com/giantswarm/apiextensions-application v0.6.2
-	github.com/giantswarm/appcatalog v1.1.0
+	github.com/giantswarm/appcatalog v1.1.1
 	github.com/giantswarm/apptest v1.4.1
 	github.com/giantswarm/backoff v1.0.1
 	github.com/giantswarm/backoff/v2 v2.0.0
